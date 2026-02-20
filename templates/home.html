@@ -1,0 +1,2057 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartTour – Secure Travel Companion</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    /* =========================================
+       CSS VARIABLES & RESET
+    ========================================= */
+    :root {
+      --bg-base:        #080c14;
+      --bg-surface:     #0d1422;
+      --bg-card:        rgba(255,255,255,0.04);
+      --bg-card-hover:  rgba(255,255,255,0.07);
+
+      --orange:         #f97316;
+      --orange-glow:    rgba(249,115,22,0.25);
+      --orange-light:   #fb923c;
+      --blue:           #3b82f6;
+      --blue-glow:      rgba(59,130,246,0.25);
+      --blue-light:     #60a5fa;
+      --teal:           #14b8a6;
+
+      --text-primary:   #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted:     #475569;
+
+      --border:         rgba(255,255,255,0.07);
+      --border-glow:    rgba(249,115,22,0.35);
+
+      --radius-sm:      8px;
+      --radius-md:      14px;
+      --radius-lg:      22px;
+      --radius-xl:      32px;
+
+      --font-display:   'Syne', sans-serif;
+      --font-body:      'DM Sans', sans-serif;
+
+      --transition:     0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    /* ---- Scrollbar ---- */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-base); }
+    ::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 3px; }
+
+    /* =========================================
+       UTILITY
+    ========================================= */
+    .container {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .section-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--orange);
+      background: var(--orange-glow);
+      border: 1px solid var(--border-glow);
+      padding: 6px 14px;
+      border-radius: 99px;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 42px);
+      font-weight: 800;
+      line-height: 1.15;
+      color: var(--text-primary);
+    }
+
+    .section-title span {
+      background: linear-gradient(135deg, var(--orange), var(--blue-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .section-sub {
+      color: var(--text-secondary);
+      font-size: 16px;
+      margin-top: 12px;
+      max-width: 520px;
+    }
+
+    /* ---- Buttons ---- */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 14px;
+      padding: 12px 26px;
+      border-radius: var(--radius-md);
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition);
+      letter-spacing: 0.02em;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--orange), #e05a0a);
+      color: #fff;
+      box-shadow: 0 0 24px var(--orange-glow);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 36px rgba(249,115,22,0.5);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+      backdrop-filter: blur(8px);
+    }
+
+    .btn-outline:hover {
+      border-color: var(--orange);
+      color: var(--orange);
+      background: var(--orange-glow);
+      transform: translateY(-2px);
+    }
+
+    .btn-blue {
+      background: linear-gradient(135deg, var(--blue), #1d4ed8);
+      color: #fff;
+      box-shadow: 0 0 24px var(--blue-glow);
+    }
+
+    .btn-blue:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 36px rgba(59,130,246,0.5);
+    }
+
+    .btn-sm {
+      padding: 8px 18px;
+      font-size: 13px;
+    }
+
+    /* ---- Glass Card ---- */
+    .glass-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      transition: var(--transition);
+    }
+
+    .glass-card:hover {
+      background: var(--bg-card-hover);
+      border-color: rgba(249,115,22,0.2);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    /* ---- Inputs ---- */
+    .input-field {
+      width: 100%;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 13px 16px;
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 15px;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .input-field::placeholder { color: var(--text-muted); }
+
+    .input-field:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px var(--orange-glow);
+    }
+
+    select.input-field option {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+    }
+
+    /* =========================================
+       BACKGROUND DECORATIONS
+    ========================================= */
+    .bg-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.18;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* =========================================
+       NAVBAR
+    ========================================= */
+    #navbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 1000;
+      padding: 16px 0;
+      background: rgba(8,12,20,0.8);
+      border-bottom: 1px solid var(--border);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: var(--transition);
+    }
+
+    #navbar .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Logo */
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .nav-logo-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, var(--orange), var(--blue));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      color: #fff;
+      box-shadow: 0 0 16px var(--orange-glow);
+    }
+
+    .nav-logo-text {
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 20px;
+      color: var(--text-primary);
+    }
+
+    .nav-logo-text span { color: var(--orange); }
+
+    /* Nav links */
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 14px;
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+    }
+
+    .nav-links a:hover,
+    .nav-links a.active {
+      color: var(--text-primary);
+      background: rgba(255,255,255,0.06);
+    }
+
+    /* Wallet button */
+    .wallet-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--orange), #e05a0a);
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: var(--radius-md);
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      box-shadow: 0 0 20px var(--orange-glow);
+      transition: var(--transition);
+    }
+
+    .wallet-btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 0 32px rgba(249,115,22,0.5);
+    }
+
+    /* Hamburger */
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      background: none;
+      border: none;
+      padding: 4px;
+    }
+
+    .nav-hamburger span {
+      display: block;
+      width: 24px;
+      height: 2px;
+      background: var(--text-primary);
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+
+    .mobile-menu {
+      display: none;
+      flex-direction: column;
+      gap: 4px;
+      padding: 16px 0 8px;
+      border-top: 1px solid var(--border);
+      margin-top: 12px;
+    }
+
+    .mobile-menu.open { display: flex; }
+
+    .mobile-menu a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 15px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      transition: var(--transition);
+    }
+
+    .mobile-menu a:hover { color: var(--orange); }
+
+    /* =========================================
+       HERO SECTION
+    ========================================= */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 120px 0 80px;
+      overflow: hidden;
+    }
+
+    /* Grid background */
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+      background-size: 50px 50px;
+      pointer-events: none;
+    }
+
+    .hero-orb-1 {
+      width: 500px; height: 500px;
+      background: var(--orange);
+      top: -100px; right: -100px;
+    }
+
+    .hero-orb-2 {
+      width: 400px; height: 400px;
+      background: var(--blue);
+      bottom: -50px; left: -100px;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 680px;
+    }
+
+    /* Chain badge */
+    .chain-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(59,130,246,0.3);
+      border-radius: 99px;
+      padding: 6px 14px 6px 8px;
+      margin-bottom: 28px;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--blue-light);
+      animation: fadeInDown 0.6s ease both;
+    }
+
+    .chain-badge-dot {
+      width: 8px; height: 8px;
+      background: var(--teal);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.8); }
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(44px, 7vw, 78px);
+      font-weight: 800;
+      line-height: 1.06;
+      margin-bottom: 24px;
+      animation: fadeInUp 0.7s ease 0.1s both;
+    }
+
+    .hero-title .gradient-text {
+      background: linear-gradient(135deg, var(--orange) 0%, var(--orange-light) 40%, var(--blue-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .hero-sub {
+      font-size: 17px;
+      color: var(--text-secondary);
+      max-width: 520px;
+      margin-bottom: 36px;
+      line-height: 1.7;
+      animation: fadeInUp 0.7s ease 0.2s both;
+    }
+
+    .hero-cta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      animation: fadeInUp 0.7s ease 0.3s both;
+    }
+
+    /* Stats row */
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      margin-top: 56px;
+      animation: fadeInUp 0.7s ease 0.4s both;
+    }
+
+    .hero-stat-num {
+      font-family: var(--font-display);
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .hero-stat-num span { color: var(--orange); }
+
+    .hero-stat-label {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* Hero visual */
+    .hero-visual {
+      position: absolute;
+      right: 0; top: 50%;
+      transform: translateY(-50%);
+      width: 420px;
+      z-index: 1;
+      animation: floatUp 4s ease-in-out infinite;
+    }
+
+    @keyframes floatUp {
+      0%, 100% { transform: translateY(-50%) translateY(0); }
+      50% { transform: translateY(-50%) translateY(-14px); }
+    }
+
+    .id-card-mockup {
+      background: linear-gradient(135deg, rgba(15,25,45,0.95), rgba(12,20,38,0.95));
+      border: 1px solid rgba(59,130,246,0.3);
+      border-radius: var(--radius-xl);
+      padding: 30px;
+      box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 60px var(--blue-glow);
+    }
+
+    .id-card-top {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+    }
+
+    .id-avatar {
+      width: 52px; height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--orange), var(--blue));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .id-info-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 16px;
+    }
+
+    .id-info-role {
+      font-size: 12px;
+      color: var(--teal);
+      margin-top: 2px;
+    }
+
+    .id-badge {
+      margin-left: auto;
+      background: rgba(20,184,166,0.15);
+      border: 1px solid rgba(20,184,166,0.4);
+      color: var(--teal);
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 99px;
+    }
+
+    .id-hash {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 10px 14px;
+      font-size: 11px;
+      font-family: 'Courier New', monospace;
+      color: var(--text-muted);
+      letter-spacing: 0.03em;
+      margin-bottom: 18px;
+      word-break: break-all;
+    }
+
+    .id-fields {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .id-field-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+
+    .id-field-value {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-primary);
+    }
+
+    /* =========================================
+       SECTION SPACING
+    ========================================= */
+    .section {
+      padding: 100px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .section-header { margin-bottom: 56px; }
+
+    /* =========================================
+       FEATURES SECTION
+    ========================================= */
+    #features {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .feature-card {
+      padding: 36px 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--orange), transparent);
+      opacity: 0;
+      transition: var(--transition);
+    }
+
+    .feature-card:hover::before { opacity: 1; }
+
+    .feature-icon {
+      width: 56px; height: 56px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      margin-bottom: 22px;
+    }
+
+    .feature-icon.orange {
+      background: var(--orange-glow);
+      border: 1px solid var(--border-glow);
+      color: var(--orange);
+    }
+
+    .feature-icon.blue {
+      background: var(--blue-glow);
+      border: 1px solid rgba(59,130,246,0.3);
+      color: var(--blue-light);
+    }
+
+    .feature-icon.teal {
+      background: rgba(20,184,166,0.15);
+      border: 1px solid rgba(20,184,166,0.3);
+      color: var(--teal);
+    }
+
+    .feature-title {
+      font-family: var(--font-display);
+      font-size: 19px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .feature-desc {
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    .feature-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 20px;
+    }
+
+    .tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 99px;
+      letter-spacing: 0.04em;
+    }
+
+    .tag-orange {
+      background: var(--orange-glow);
+      color: var(--orange-light);
+      border: 1px solid var(--border-glow);
+    }
+
+    .tag-blue {
+      background: var(--blue-glow);
+      color: var(--blue-light);
+      border: 1px solid rgba(59,130,246,0.3);
+    }
+
+    .tag-teal {
+      background: rgba(20,184,166,0.1);
+      color: var(--teal);
+      border: 1px solid rgba(20,184,166,0.25);
+    }
+
+    /* =========================================
+       EXPLORE SECTION
+    ========================================= */
+    #explore {}
+
+    .explore-search-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .explore-search-bar .input-field { flex: 1; }
+
+    /* Map placeholder */
+    .map-placeholder {
+      width: 100%;
+      height: 340px;
+      background: linear-gradient(135deg, rgba(15,25,45,0.8), rgba(10,18,34,0.9));
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 40px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .map-placeholder::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(59,130,246,0.06) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,130,246,0.06) 1px, transparent 1px);
+      background-size: 30px 30px;
+    }
+
+    .map-placeholder-icon {
+      font-size: 40px;
+      color: var(--blue-light);
+      opacity: 0.6;
+      position: relative;
+      z-index: 1;
+    }
+
+    .map-placeholder-text {
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: var(--text-muted);
+      position: relative;
+      z-index: 1;
+    }
+
+    .map-placeholder-sub {
+      font-size: 13px;
+      color: var(--text-muted);
+      opacity: 0.6;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Map pins (decorative) */
+    .map-pin {
+      position: absolute;
+      z-index: 2;
+    }
+
+    .map-pin-dot {
+      width: 14px; height: 14px;
+      background: var(--orange);
+      border-radius: 50%;
+      border: 2px solid #fff;
+      box-shadow: 0 0 12px var(--orange-glow);
+      animation: ping 2s ease infinite;
+    }
+
+    @keyframes ping {
+      0%, 100% { box-shadow: 0 0 0 0 var(--orange-glow); }
+      50% { box-shadow: 0 0 0 8px transparent; }
+    }
+
+    /* Places grid */
+    .places-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 22px;
+    }
+
+    .place-card {
+      overflow: hidden;
+    }
+
+    .place-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      display: block;
+      background: linear-gradient(135deg, #1a2a3a, #0d1a2a);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .place-img-inner {
+      width: 100%;
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .place-img-inner.bg1 { background: linear-gradient(135deg, #1a2a4a, #0d3a5a); }
+    .place-img-inner.bg2 { background: linear-gradient(135deg, #2a1a3a, #3a0d1a); }
+    .place-img-inner.bg3 { background: linear-gradient(135deg, #1a3a2a, #0d5a3a); }
+
+    .place-body {
+      padding: 20px;
+    }
+
+    .place-rating {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      color: #fbbf24;
+      margin-bottom: 6px;
+    }
+
+    .place-rating span { color: var(--text-muted); margin-left: 2px; }
+
+    .place-name {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 16px;
+      margin-bottom: 6px;
+    }
+
+    .place-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+      line-height: 1.6;
+    }
+
+    /* =========================================
+       TRANSLATOR SECTION
+    ========================================= */
+    #translator {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .translator-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .translator-panel {
+      padding: 28px;
+    }
+
+    .translator-panel-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+    }
+
+    .translator-textarea {
+      width: 100%;
+      min-height: 160px;
+      resize: vertical;
+    }
+
+    .translator-lang-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 14px;
+    }
+
+    .translator-lang-row select { flex: 1; }
+
+    .translator-swap-btn {
+      width: 40px; height: 40px;
+      background: var(--orange-glow);
+      border: 1px solid var(--border-glow);
+      border-radius: var(--radius-sm);
+      color: var(--orange);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: var(--transition);
+      flex-shrink: 0;
+    }
+
+    .translator-swap-btn:hover {
+      background: var(--orange);
+      color: #fff;
+    }
+
+    .translator-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .voice-btn {
+      width: 44px; height: 44px;
+      background: var(--blue-glow);
+      border: 1px solid rgba(59,130,246,0.3);
+      border-radius: var(--radius-sm);
+      color: var(--blue-light);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: var(--transition);
+    }
+
+    .voice-btn:hover {
+      background: var(--blue);
+      color: #fff;
+      border-color: var(--blue);
+    }
+
+    .translator-output {
+      background: rgba(0,0,0,0.25);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      min-height: 160px;
+      padding: 16px;
+      color: var(--text-secondary);
+      font-size: 15px;
+      line-height: 1.7;
+      font-style: italic;
+    }
+
+    .output-placeholder {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* =========================================
+       IDENTITY SECTION
+    ========================================= */
+    #identity {}
+
+    .identity-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .identity-create {
+      padding: 36px;
+    }
+
+    .identity-create h3 {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 22px;
+    }
+
+    .upload-zone {
+      border: 2px dashed rgba(249,115,22,0.35);
+      border-radius: var(--radius-md);
+      padding: 32px;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-bottom: 22px;
+    }
+
+    .upload-zone:hover {
+      border-color: var(--orange);
+      background: var(--orange-glow);
+    }
+
+    .upload-zone i {
+      font-size: 28px;
+      color: var(--orange);
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    .upload-zone p {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .upload-zone strong { color: var(--orange); }
+
+    .hash-display {
+      background: rgba(0,0,0,0.3);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 22px;
+    }
+
+    .hash-display i {
+      color: var(--teal);
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .hash-text {
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      word-break: break-all;
+      flex: 1;
+    }
+
+    .hash-copy {
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px;
+      transition: var(--transition);
+    }
+
+    .hash-copy:hover { color: var(--orange); }
+
+    /* Access requests */
+    .identity-access { padding: 36px; }
+
+    .identity-access h3 {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 22px;
+    }
+
+    .access-request {
+      background: rgba(0,0,0,0.2);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+      transition: var(--transition);
+    }
+
+    .access-request:hover {
+      border-color: rgba(249,115,22,0.2);
+    }
+
+    .req-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .req-avatar.a1 { background: rgba(249,115,22,0.2); color: var(--orange); }
+    .req-avatar.a2 { background: var(--blue-glow); color: var(--blue-light); }
+    .req-avatar.a3 { background: rgba(20,184,166,0.2); color: var(--teal); }
+
+    .req-info { flex: 1; }
+
+    .req-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .req-entity {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .req-actions { display: flex; gap: 8px; }
+
+    .req-approve {
+      background: rgba(20,184,166,0.15);
+      border: 1px solid rgba(20,184,166,0.3);
+      color: var(--teal);
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .req-approve:hover {
+      background: var(--teal);
+      color: #fff;
+    }
+
+    .req-reject {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.25);
+      color: #ef4444;
+      padding: 6px 14px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      transition: var(--transition);
+    }
+
+    .req-reject:hover {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    /* =========================================
+       FOOTER
+    ========================================= */
+    footer {
+      background: var(--bg-surface);
+      border-top: 1px solid var(--border);
+      padding: 64px 0 32px;
+    }
+
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 56px;
+    }
+
+    .footer-brand p {
+      color: var(--text-secondary);
+      font-size: 14px;
+      line-height: 1.7;
+      margin: 14px 0 22px;
+      max-width: 260px;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 10px;
+    }
+
+    .social-link {
+      width: 36px; height: 36px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      transition: var(--transition);
+    }
+
+    .social-link:hover {
+      background: var(--orange-glow);
+      border-color: var(--border-glow);
+      color: var(--orange);
+    }
+
+    .footer-col h4 {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      margin-bottom: 18px;
+      letter-spacing: 0.05em;
+    }
+
+    .footer-col ul { list-style: none; }
+
+    .footer-col ul li {
+      margin-bottom: 10px;
+    }
+
+    .footer-col ul li a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 14px;
+      transition: var(--transition);
+    }
+
+    .footer-col ul li a:hover { color: var(--orange); }
+
+    .footer-bottom {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .footer-bottom p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .footer-bottom-badges {
+      display: flex;
+      gap: 10px;
+    }
+
+    .blockchain-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 99px;
+    }
+
+    .blockchain-badge i { color: var(--teal); font-size: 10px; }
+
+    /* =========================================
+       ANIMATIONS
+    ========================================= */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* =========================================
+       RESPONSIVE
+    ========================================= */
+    @media (max-width: 1024px) {
+      .hero-visual { display: none; }
+      .features-grid { grid-template-columns: 1fr; }
+      .places-grid { grid-template-columns: 1fr 1fr; }
+      .translator-grid { grid-template-columns: 1fr; }
+      .identity-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; }
+    }
+
+    @media (max-width: 768px) {
+      .nav-links, .wallet-btn { display: none; }
+      .nav-hamburger { display: flex; }
+
+      .hero-stats { flex-wrap: wrap; gap: 24px; }
+
+      .places-grid { grid-template-columns: 1fr; }
+
+      .explore-search-bar { flex-direction: column; }
+
+      .footer-grid { grid-template-columns: 1fr; }
+
+      .footer-bottom { flex-direction: column; gap: 14px; text-align: center; }
+    }
+    .place-img-inner {
+  height: 200px;          /* make sure it has height */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.place-img-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+  </style>
+</head>
+<body>
+
+  <!-- =============================================
+       NAVBAR
+  ============================================= -->
+  <nav id="navbar">
+    <div class="container">
+      <div class="nav-inner">
+
+        <!-- Logo -->
+        <a href="#" class="nav-logo">
+          <div class="nav-logo-icon"><i class="fas fa-globe-americas"></i></div>
+          <span class="nav-logo-text">Smart<span>Tour</span></span>
+        </a>
+
+        <!-- Desktop nav links -->
+        <ul class="nav-links">
+          <li><a href="#hero" class="active">Home</a></li>
+          <li><a href="#explore">Explore</a></li>
+          <li><a href="#translator">Translator</a></li>
+          <li><a href="#identity">Identity</a></li>
+        </ul>
+
+        <!-- Wallet button -->
+        <button class="wallet-btn">
+          <i class="fas fa-wallet"></i> Connect Wallet
+        </button>
+
+        <!-- Hamburger -->
+        <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+
+      <!-- Mobile menu -->
+      <div class="mobile-menu" id="mobileMenu">
+        <a href="#hero">Home</a>
+        <a href="#explore">Explore</a>
+        <a href="#translator">Translator</a>
+        <a href="#identity">Identity</a>
+        <a href="#" style="color:var(--orange);"><i class="fas fa-wallet"></i> Connect Wallet</a>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- =============================================
+       HERO SECTION
+  ============================================= -->
+  <section id="hero">
+    <!-- Background orbs -->
+    <div class="bg-orb hero-orb-1"></div>
+    <div class="bg-orb hero-orb-2"></div>
+
+    <div class="container">
+      <div class="hero-content">
+
+        <!-- Live badge -->
+        <div class="chain-badge">
+          <div class="chain-badge-dot"></div>
+          Powered by Ethereum &amp; IPFS Blockchain
+        </div>
+
+        <!-- Heading -->
+        <h1 class="hero-title">
+          Secure Identity.<br>
+          <span class="gradient-text">Smart Travel.</span>
+        </h1>
+
+        <!-- Subheading -->
+        <p class="hero-sub">
+          SmartTour combines blockchain-verified identity management with AI-powered travel assistance — giving tourists a trustworthy, seamless, and secure travel experience across the globe.
+        </p>
+
+        <!-- CTAs -->
+        <div class="hero-cta">
+          <button class="btn btn-primary">
+            <i class="fas fa-wallet"></i> Connect Wallet
+          </button>
+          <a href="#explore" class="btn btn-outline">
+            <i class="fas fa-map-location-dot"></i> Explore Nearby
+          </a>
+        </div>
+
+        <!-- Stats -->
+        <div class="hero-stats">
+          <div>
+            <div class="hero-stat-num">48K<span>+</span></div>
+            <div class="hero-stat-label">Verified Tourists</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">120<span>+</span></div>
+            <div class="hero-stat-label">Countries Supported</div>
+          </div>
+          <div>
+            <div class="hero-stat-num">0.2s<span></span></div>
+            <div class="hero-stat-label">Identity Verification</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ID Card Mockup (decorative) -->
+    <div class="hero-visual">
+      <div class="id-card-mockup">
+        <div class="id-card-top">
+          <div class="id-avatar"><i class="fas fa-user"></i></div>
+          <div>
+            <div class="id-info-name">Elena Vasquez</div>
+            <div class="id-info-role">Verified Traveler</div>
+          </div>
+          <div class="id-badge"><i class="fas fa-check-circle"></i> Verified</div>
+        </div>
+        <div class="id-hash">
+          HASH: 0x3f7a9c2e8b1d4f56a892c3d7e1f2a4b5c6d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2
+        </div>
+        <div class="id-fields">
+          <div>
+            <div class="id-field-label">Nationality</div>
+            <div class="id-field-value">Spain 🇪🇸</div>
+          </div>
+          <div>
+            <div class="id-field-label">Passport #</div>
+            <div class="id-field-value">ES••••1234</div>
+          </div>
+          <div>
+            <div class="id-field-label">Current Location</div>
+            <div class="id-field-value">Tokyo, Japan</div>
+          </div>
+          <div>
+            <div class="id-field-label">Visa Status</div>
+            <div class="id-field-value" style="color:var(--teal);">Active ✓</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+
+  <!-- =============================================
+       FEATURES SECTION
+  ============================================= -->
+  <section id="features" class="section">
+    <div class="container">
+
+      <div class="section-header">
+        <div class="section-label"><i class="fas fa-cubes"></i> Core Features</div>
+        <h2 class="section-title">Everything You Need for<br><span>Secure, Smart Travel</span></h2>
+        <p class="section-sub">
+          Three pillars of the SmartTour ecosystem — built to protect your identity, guide your journey, and break language barriers.
+        </p>
+      </div>
+
+      <div class="features-grid">
+
+        <!-- Feature 1 -->
+        <div class="glass-card feature-card reveal">
+          <div class="feature-icon orange">
+            <i class="fas fa-fingerprint"></i>
+          </div>
+          <div class="feature-title">Blockchain Identity Management</div>
+          <p class="feature-desc">
+            Store, verify, and share your travel identity on a decentralized blockchain. Your passport data is hashed, encrypted, and accessible only with your consent — eliminating fraud and document forgery.
+          </p>
+          <div class="feature-tags">
+            <span class="tag tag-orange">IPFS Storage</span>
+            <span class="tag tag-orange">Zero-Knowledge Proof</span>
+            <span class="tag tag-orange">NFT-Based ID</span>
+          </div>
+        </div>
+
+        <!-- Feature 2 -->
+        <div class="glass-card feature-card reveal reveal-delay-1">
+          <div class="feature-icon blue">
+            <i class="fas fa-map-location-dot"></i>
+          </div>
+          <div class="feature-title">Explore Nearby Places</div>
+          <p class="feature-desc">
+            Discover hidden gems, landmarks, restaurants, and cultural sites near you powered by real-time geolocation and Google Maps API. Get personalized recommendations based on your travel profile.
+          </p>
+          <div class="feature-tags">
+            <span class="tag tag-blue">Google Maps API</span>
+            <span class="tag tag-blue">Live Geolocation</span>
+            <span class="tag tag-blue">AI Recommendations</span>
+          </div>
+        </div>
+
+        <!-- Feature 3 -->
+        <div class="glass-card feature-card reveal reveal-delay-2">
+          <div class="feature-icon teal">
+            <i class="fas fa-language"></i>
+          </div>
+          <div class="feature-title">Multi-Language Translator</div>
+          <p class="feature-desc">
+            Communicate effortlessly in any country. Translate text and voice across 120+ languages in real-time, with cultural context awareness and offline mode support for remote destinations.
+          </p>
+          <div class="feature-tags">
+            <span class="tag tag-teal">120+ Languages</span>
+            <span class="tag tag-teal">Voice Input</span>
+            <span class="tag tag-teal">Offline Mode</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       EXPLORE SECTION
+  ============================================= -->
+  <section id="explore" class="section">
+    <div class="container">
+
+      <div class="section-header">
+        <div class="section-label"><i class="fas fa-compass"></i> Explore</div>
+        <h2 class="section-title">Discover Places<br><span>Around You</span></h2>
+        <p class="section-sub">
+          Search any destination worldwide and explore verified tourist spots, rated by fellow travelers on the blockchain.
+        </p>
+      </div>
+
+      <!-- Search bar -->
+      <div class="explore-search-bar reveal">
+        <input type="text" class="input-field" placeholder="🔍  Search city, landmark, or attraction...">
+        <button class="btn btn-primary"><i class="fas fa-location-crosshairs"></i> Use My Location</button>
+        <button class="btn btn-outline"><i class="fas fa-sliders"></i> Filter</button>
+      </div>
+
+      <!-- Map placeholder -->
+      <div class="map-placeholder reveal">
+        <!-- Decorative pins -->
+        <div class="map-pin" style="top:35%;left:25%">
+          <div class="map-pin-dot"></div>
+        </div>
+        <div class="map-pin" style="top:55%;left:60%">
+          <div class="map-pin-dot" style="background:var(--blue);box-shadow:0 0 12px var(--blue-glow);"></div>
+        </div>
+        <div class="map-pin" style="top:25%;left:70%">
+          <div class="map-pin-dot" style="background:var(--teal);box-shadow:0 0 12px rgba(20,184,166,0.4);"></div>
+        </div>
+
+        <div class="map-placeholder-icon"><i class="fas fa-map"></i></div>
+        <div class="map-placeholder-text">Google Maps Integration</div>
+        <div class="map-placeholder-sub">Connect your wallet to enable location-based discovery</div>
+      </div>
+
+      <!-- Places grid -->
+      <div class="places-grid">
+
+      <!-- Place 1 -->
+      <div class="glass-card place-card reveal">
+        <div class="place-img-inner">
+          <img src="../static/sensoji-temple.png" alt="Senso-ji Temple">
+        </div>
+        <div class="place-body">
+          <div class="place-rating">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="fas fa-star-half-stroke"></i>
+            <span>4.8 (2.3k reviews)</span>
+          </div>
+          <div class="place-name">Senso-ji Temple</div>
+          <p class="place-desc">
+            Tokyo's oldest and most significant Buddhist temple, dating back to 628 AD.
+            A spiritual sanctuary surrounded by traditional Nakamise market stalls.
+          </p>
+          <a href="#" class="btn btn-outline btn-sm">
+            <i class="fas fa-route"></i> Get Directions
+          </a>
+        </div>
+      </div>
+      
+      
+      <!-- Place 2 -->
+      <div class="glass-card place-card reveal reveal-delay-1">
+        <div class="place-img-inner">
+          <img src="../static/tokyo-skytree.png" alt="Tokyo Skytree">
+        </div>
+        <div class="place-body">
+          <div class="place-rating">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <span>5.0 (4.7k reviews)</span>
+          </div>
+          <div class="place-name">Tokyo Skytree</div>
+          <p class="place-desc">
+            Standing at 634 meters, the Tokyo Skytree offers an unparalleled panoramic
+            view of the sprawling metropolis — best experienced at golden hour.
+          </p>
+          <a href="#" class="btn btn-outline btn-sm">
+            <i class="fas fa-route"></i> Get Directions
+          </a>
+        </div>
+      </div>
+      
+      
+      <!-- Place 3 -->
+      <div class="glass-card place-card reveal reveal-delay-2">
+        <div class="place-img-inner">
+          <img src="../static/alappuzha.png" alt="Alappuzha">
+        </div>
+        <div class="place-body">
+          <div class="place-rating">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="far fa-star"></i>
+            <span>4.6 (1.9k reviews)</span>
+          </div>
+          <div class="place-name">Alappuzha</div>
+          <p class="place-desc">
+            Alappuzha (or Alleppey) is a city in Kerala, best known for houseboat
+            cruises along the rustic backwaters.
+          </p>
+          <a href="#" class="btn btn-outline btn-sm">
+            <i class="fas fa-route"></i> Get Directions
+          </a>
+        </div>
+      </div>
+
+
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       TRANSLATOR SECTION
+  ============================================= -->
+  <section id="translator" class="section">
+    <div class="container">
+
+      <div class="section-header">
+        <div class="section-label"><i class="fas fa-language"></i> Translator</div>
+        <h2 class="section-title">Break Every<br><span>Language Barrier</span></h2>
+        <p class="section-sub">
+          Real-time text and voice translation powered by neural AI. Communicate naturally wherever your journey takes you.
+        </p>
+      </div>
+
+      <div class="translator-grid reveal">
+
+        <!-- Input panel -->
+        <div class="glass-card translator-panel">
+          <div class="translator-panel-label">Source Language</div>
+          <textarea class="input-field translator-textarea" placeholder="Type or speak the text you want to translate..."></textarea>
+          <div class="translator-lang-row">
+            <select class="input-field">
+              <option>🇬🇧 English</option>
+              <option>🇪🇸 Spanish</option>
+              <option>🇫🇷 French</option>
+              <option>🇩🇪 German</option>
+              <option>🇮🇳 Hindi</option>
+              <option>🇯🇵 Japanese</option>
+              <option>🇰🇷 Korean</option>
+              <option>🇨🇳 Chinese (Simplified)</option>
+              <option>🇦🇪 Arabic</option>
+              <option>🇧🇷 Portuguese</option>
+            </select>
+            <button class="translator-swap-btn" title="Swap languages"><i class="fas fa-arrows-left-right"></i></button>
+            <select class="input-field">
+              <option>🇯🇵 Japanese</option>
+              <option>🇬🇧 English</option>
+              <option>🇪🇸 Spanish</option>
+              <option>🇫🇷 French</option>
+              <option>🇩🇪 German</option>
+              <option>🇮🇳 Hindi</option>
+              <option>🇰🇷 Korean</option>
+              <option>🇨🇳 Chinese (Simplified)</option>
+              <option>🇦🇪 Arabic</option>
+              <option>🇧🇷 Portuguese</option>
+            </select>
+          </div>
+          <div class="translator-controls">
+            <button class="btn btn-primary"><i class="fas fa-bolt"></i> Translate</button>
+            <button class="voice-btn" title="Voice input"><i class="fas fa-microphone"></i></button>
+            <button class="btn btn-outline btn-sm"><i class="fas fa-volume-high"></i> Read Aloud</button>
+          </div>
+        </div>
+
+        <!-- Output panel -->
+        <div class="glass-card translator-panel">
+          <div class="translator-panel-label">Translation Output</div>
+          <div class="translator-output">
+            <span class="output-placeholder"><i class="fas fa-wand-magic-sparkles" style="color:var(--orange);margin-right:6px;"></i>Your translated text will appear here...</span>
+          </div>
+          <div class="translator-controls" style="margin-top:16px;">
+            <button class="btn btn-outline btn-sm"><i class="fas fa-copy"></i> Copy</button>
+            <button class="btn btn-outline btn-sm"><i class="fas fa-share-nodes"></i> Share</button>
+            <button class="voice-btn" title="Read translation aloud"><i class="fas fa-volume-high"></i></button>
+          </div>
+
+          <!-- Quick phrases -->
+          <div style="margin-top:24px;">
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-muted);margin-bottom:12px;font-weight:700;">Quick Travel Phrases</div>
+            <div style="display:flex;flex-wrap:wrap;gap:8px;">
+              <button class="btn btn-outline btn-sm">Where is the hotel?</button>
+              <button class="btn btn-outline btn-sm">How much does it cost?</button>
+              <button class="btn btn-outline btn-sm">Call the police</button>
+              <button class="btn btn-outline btn-sm">I need a doctor</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       IDENTITY SECTION
+  ============================================= -->
+  <section id="identity" class="section">
+    <div class="container">
+
+      <div class="section-header">
+        <div class="section-label"><i class="fas fa-id-card"></i> Digital Identity</div>
+        <h2 class="section-title">Your Sovereign<br><span>Travel Identity</span></h2>
+        <p class="section-sub">
+          Create and manage your blockchain-verified digital ID. Control who accesses your travel documents — immutably and securely.
+        </p>
+      </div>
+
+      <div class="identity-grid">
+
+        <!-- Create ID -->
+        <div class="glass-card identity-create reveal">
+          <h3><i class="fas fa-id-badge" style="color:var(--orange);margin-right:10px;"></i>Create Digital ID</h3>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px;">
+            <input type="text" class="input-field" placeholder="Full Name">
+            <input type="text" class="input-field" placeholder="Nationality">
+            <input type="text" class="input-field" placeholder="Date of Birth">
+            <input type="text" class="input-field" placeholder="Passport Number">
+          </div>
+
+          <!-- Upload zone -->
+          <div class="upload-zone">
+            <i class="fas fa-cloud-arrow-up"></i>
+            <p><strong>Drop your document here</strong> or click to upload</p>
+            <p style="margin-top:6px;font-size:12px;color:var(--text-muted);">Passport, National ID, or Visa • PDF, JPG, PNG</p>
+          </div>
+
+          <!-- Hash display -->
+          <div class="hash-display">
+            <i class="fas fa-link"></i>
+            <div class="hash-text">0x••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••••</div>
+            <div class="hash-copy"><i class="fas fa-copy"></i></div>
+          </div>
+
+          <div style="display:flex;gap:12px;">
+            <button class="btn btn-primary" style="flex:1;">
+              <i class="fas fa-cube"></i> Mint Identity NFT
+            </button>
+            <button class="btn btn-outline">
+              <i class="fas fa-eye"></i> Preview
+            </button>
+          </div>
+        </div>
+
+        <!-- Access requests -->
+        <div class="glass-card identity-access reveal reveal-delay-1">
+          <h3><i class="fas fa-shield-halved" style="color:var(--blue-light);margin-right:10px;"></i>Access Requests</h3>
+          <p style="font-size:14px;color:var(--text-secondary);margin-bottom:24px;">Third parties requesting access to your verified identity data. Review each request carefully.</p>
+
+          <!-- Request 1 -->
+          <div class="access-request">
+            <div class="req-avatar a1"><i class="fas fa-plane"></i></div>
+            <div class="req-info">
+              <div class="req-name">Skyline Airlines</div>
+              <div class="req-entity">Requesting: Passport &amp; Visa Status</div>
+            </div>
+            <div class="req-actions">
+              <button class="req-approve">Approve</button>
+              <button class="req-reject">Reject</button>
+            </div>
+          </div>
+
+          <!-- Request 2 -->
+          <div class="access-request">
+            <div class="req-avatar a2"><i class="fas fa-hotel"></i></div>
+            <div class="req-info">
+              <div class="req-name">Grand Imperial Hotel</div>
+              <div class="req-entity">Requesting: Identity Verification</div>
+            </div>
+            <div class="req-actions">
+              <button class="req-approve">Approve</button>
+              <button class="req-reject">Reject</button>
+            </div>
+          </div>
+
+          <!-- Request 3 -->
+          <div class="access-request">
+            <div class="req-avatar a3"><i class="fas fa-landmark"></i></div>
+            <div class="req-info">
+              <div class="req-name">Japan Border Control</div>
+              <div class="req-entity">Requesting: Full Travel Record</div>
+            </div>
+            <div class="req-actions">
+              <button class="req-approve">Approve</button>
+              <button class="req-reject">Reject</button>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:24px;">
+            <div style="text-align:center;background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px 10px;">
+              <div style="font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--teal);">12</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Approved</div>
+            </div>
+            <div style="text-align:center;background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px 10px;">
+              <div style="font-family:var(--font-display);font-size:22px;font-weight:800;color:#ef4444;">3</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Rejected</div>
+            </div>
+            <div style="text-align:center;background:rgba(0,0,0,0.2);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px 10px;">
+              <div style="font-family:var(--font-display);font-size:22px;font-weight:800;color:var(--orange);">3</div>
+              <div style="font-size:11px;color:var(--text-muted);margin-top:2px;">Pending</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- =============================================
+       FOOTER
+  ============================================= -->
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+
+        <!-- Brand -->
+        <div class="footer-brand">
+          <a href="#" class="nav-logo" style="display:inline-flex;margin-bottom:4px;">
+            <div class="nav-logo-icon"><i class="fas fa-globe-americas"></i></div>
+            <span class="nav-logo-text">Smart<span>Tour</span></span>
+          </a>
+          <p>Secure, decentralized travel identity management for the modern explorer. Built on Ethereum, powered by trust.</p>
+          <div class="social-links">
+            <a href="#" class="social-link" aria-label="Twitter"><i class="fab fa-x-twitter"></i></a>
+            <a href="#" class="social-link" aria-label="Discord"><i class="fab fa-discord"></i></a>
+            <a href="#" class="social-link" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            <a href="#" class="social-link" aria-label="Telegram"><i class="fab fa-telegram"></i></a>
+            <a href="#" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+          </div>
+        </div>
+
+        <!-- About -->
+        <div class="footer-col">
+          <h4>About</h4>
+          <ul>
+            <li><a href="#">Our Mission</a></li>
+            <li><a href="#">How It Works</a></li>
+            <li><a href="#">Whitepaper</a></li>
+            <li><a href="#">Roadmap</a></li>
+            <li><a href="#">Team</a></li>
+          </ul>
+        </div>
+
+        <!-- Product -->
+        <div class="footer-col">
+          <h4>Product</h4>
+          <ul>
+            <li><a href="#explore">Explore Places</a></li>
+            <li><a href="#translator">Translator</a></li>
+            <li><a href="#identity">Digital ID</a></li>
+            <li><a href="#">Travel Wallet</a></li>
+            <li><a href="#">Mobile App</a></li>
+          </ul>
+        </div>
+
+        <!-- Contact -->
+        <div class="footer-col">
+          <h4>Contact</h4>
+          <ul>
+            <li><a href="mailto:support@smarttour.io"><i class="fas fa-envelope" style="width:16px;margin-right:6px;color:var(--orange);"></i>support@smarttour.io</a></li>
+            <li><a href="#"><i class="fas fa-headset" style="width:16px;margin-right:6px;color:var(--orange);"></i>Live Support</a></li>
+            <li><a href="#"><i class="fab fa-discord" style="width:16px;margin-right:6px;color:var(--orange);"></i>Community</a></li>
+            <li><a href="#"><i class="fas fa-bug" style="width:16px;margin-right:6px;color:var(--orange);"></i>Report a Bug</a></li>
+            <li><a href="#"><i class="fas fa-newspaper" style="width:16px;margin-right:6px;color:var(--orange);"></i>Press Kit</a></li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Bottom bar -->
+      <div class="footer-bottom">
+        <p>© 2025 SmartTour. All rights reserved. Built with ❤️ for secure travel.</p>
+        <div class="footer-bottom-badges">
+          <div class="blockchain-badge">
+            <i class="fas fa-circle"></i> Ethereum Mainnet
+          </div>
+          <div class="blockchain-badge">
+            <i class="fas fa-circle" style="color:var(--blue);"></i> IPFS Secured
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- =============================================
+       JAVASCRIPT
+  ============================================= -->
+  <script>
+    /* ---- Mobile menu toggle ---- */
+    const hamburger = document.getElementById('hamburger');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    hamburger.addEventListener('click', () => {
+      mobileMenu.classList.toggle('open');
+    });
+
+    // Close mobile menu on link click
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => mobileMenu.classList.remove('open'));
+    });
+
+    /* ---- Navbar scroll effect ---- */
+    const navbar = document.getElementById('navbar');
+    window.addEventListener('scroll', () => {
+      if (window.scrollY > 60) {
+        navbar.style.background = 'rgba(8,12,20,0.97)';
+        navbar.style.boxShadow = '0 4px 24px rgba(0,0,0,0.4)';
+      } else {
+        navbar.style.background = 'rgba(8,12,20,0.8)';
+        navbar.style.boxShadow = 'none';
+      }
+    });
+
+    /* ---- Active nav link on scroll ---- */
+    const sections = document.querySelectorAll('section[id]');
+    const navLinks = document.querySelectorAll('.nav-links a');
+
+    window.addEventListener('scroll', () => {
+      let current = '';
+      sections.forEach(section => {
+        if (window.scrollY >= section.offsetTop - 120) {
+          current = section.getAttribute('id');
+        }
+      });
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === '#' + current) {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    /* ---- Scroll reveal ---- */
+    const reveals = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    reveals.forEach(el => observer.observe(el));
+
+    /* ---- Translator swap button ---- */
+    const swapBtn = document.querySelector('.translator-swap-btn');
+    if (swapBtn) {
+      swapBtn.addEventListener('click', () => {
+        const selects = document.querySelectorAll('.translator-lang-row select');
+        const temp = selects[0].value;
+        selects[0].value = selects[1].value;
+        selects[1].value = temp;
+      });
+    }
+
+    /* ---- Upload zone click simulation ---- */
+    const uploadZone = document.querySelector('.upload-zone');
+    if (uploadZone) {
+      uploadZone.addEventListener('click', () => {
+        // In a real app, this would trigger a file input
+        alert('File upload: In production, this would open your file browser to select a passport or ID document.');
+      });
+      uploadZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone.style.borderColor = 'var(--orange)';
+        uploadZone.style.background = 'var(--orange-glow)';
+      });
+      uploadZone.addEventListener('dragleave', () => {
+        uploadZone.style.borderColor = 'rgba(249,115,22,0.35)';
+        uploadZone.style.background = 'transparent';
+      });
+    }
+
+    /* ---- Hash copy button ---- */
+    const hashCopy = document.querySelector('.hash-copy');
+    if (hashCopy) {
+      hashCopy.addEventListener('click', () => {
+        const hashText = document.querySelector('.hash-text').textContent;
+        navigator.clipboard.writeText(hashText).then(() => {
+          hashCopy.innerHTML = '<i class="fas fa-check"></i>';
+          hashCopy.style.color = 'var(--teal)';
+          setTimeout(() => {
+            hashCopy.innerHTML = '<i class="fas fa-copy"></i>';
+            hashCopy.style.color = '';
+          }, 2000);
+        });
+      });
+    }
+
+    /* ---- Translate button mock ---- */
+    const translateBtn = document.querySelector('.translator-controls .btn-primary');
+    if (translateBtn) {
+      translateBtn.addEventListener('click', () => {
+        const input = document.querySelector('.translator-textarea').value.trim();
+        const output = document.querySelector('.translator-output');
+        if (input) {
+          output.innerHTML = '<i class="fas fa-spinner fa-spin" style="color:var(--orange);margin-right:8px;"></i> Translating...';
+          setTimeout(() => {
+            // Mock translation output
+            output.innerHTML = '翻訳されたテキストがここに表示されます。（Translation placeholder — connect to a real translation API in production to show actual results.）';
+            output.style.fontStyle = 'normal';
+          }, 1200);
+        } else {
+          output.innerHTML = '<span style="color:var(--orange);"><i class="fas fa-exclamation-circle"></i> Please enter text to translate.</span>';
+        }
+      });
+    }
+
+    /* ---- Quick phrase buttons ---- */
+    document.querySelectorAll('.translator-controls ~ div .btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelector('.translator-textarea').value = btn.textContent;
+      });
+    });
+  </script>
+</body>
+</html>
