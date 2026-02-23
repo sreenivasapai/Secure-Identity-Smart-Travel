@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up – SmartTour</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet" />
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    /* =========================================
+       CSS VARIABLES
+    ========================================= */
+    :root {
+      --bg-base:        #080c14;
+      --bg-surface:     #0d1422;
+      --bg-card:        rgba(255,255,255,0.04);
+
+      --orange:         #f97316;
+      --orange-glow:    rgba(249,115,22,0.2);
+      --orange-light:   #fb923c;
+      --blue:           #3b82f6;
+      --blue-glow:      rgba(59,130,246,0.2);
+      --blue-light:     #60a5fa;
+      --teal:           #14b8a6;
+
+      --text-primary:   #f1f5f9;
+      --text-secondary: #94a3b8;
+      --text-muted:     #475569;
+
+      --border:         rgba(255,255,255,0.07);
+      --border-focus:   rgba(249,115,22,0.5);
+
+      --radius-sm:      8px;
+      --radius-md:      14px;
+      --radius-lg:      22px;
+      --radius-xl:      32px;
+
+      --font-display:   'Syne', sans-serif;
+      --font-body:      'DM Sans', sans-serif;
+      --transition:     0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-base);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--bg-base); }
+    ::-webkit-scrollbar-thumb { background: var(--orange); border-radius: 3px; }
+
+    /* =========================================
+       PAGE LAYOUT — two-column split
+    ========================================= */
+    .page-wrapper {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100vh;
+    }
+
+    /* =========================================
+       LEFT PANEL — decorative / brand
+    ========================================= */
+    .left-panel {
+      position: relative;
+      background: var(--bg-surface);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 40px 52px;
+      overflow: hidden;
+      border-right: 1px solid var(--border);
+    }
+
+    /* Grid overlay */
+    .left-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(59,130,246,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(59,130,246,0.05) 1px, transparent 1px);
+      background-size: 44px 44px;
+      pointer-events: none;
+    }
+
+    /* Orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      opacity: 0.18;
+      pointer-events: none;
+    }
+    .orb-1 { width: 400px; height: 400px; background: var(--orange); top: -80px; right: -80px; }
+    .orb-2 { width: 320px; height: 320px; background: var(--blue);   bottom: -60px; left: -60px; }
+
+    /* Logo */
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-icon {
+      width: 40px; height: 40px;
+      background: linear-gradient(135deg, var(--orange), var(--blue));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; color: #fff;
+      box-shadow: 0 0 18px var(--orange-glow);
+    }
+
+    .logo-text {
+      font-family: var(--font-display);
+      font-size: 21px;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    .logo-text span { color: var(--orange); }
+
+    /* Center content */
+    .left-center {
+      position: relative;
+      z-index: 1;
+    }
+
+    .left-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      color: var(--orange);
+      background: var(--orange-glow);
+      border: 1px solid rgba(249,115,22,0.3);
+      padding: 5px 12px;
+      border-radius: 99px;
+      margin-bottom: 22px;
+    }
+
+    .left-heading {
+      font-family: var(--font-display);
+      font-size: clamp(32px, 3.5vw, 48px);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 18px;
+    }
+
+    .left-heading .grad {
+      background: linear-gradient(135deg, var(--orange), var(--orange-light), var(--blue-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .left-sub {
+      font-size: 15px;
+      color: var(--text-secondary);
+      line-height: 1.75;
+      max-width: 380px;
+      margin-bottom: 40px;
+    }
+
+    /* Feature pills */
+    .features-list {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .feature-pill {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      transition: var(--transition);
+      animation: slideIn 0.5s ease both;
+    }
+
+    .feature-pill:nth-child(1) { animation-delay: 0.1s; }
+    .feature-pill:nth-child(2) { animation-delay: 0.2s; }
+    .feature-pill:nth-child(3) { animation-delay: 0.3s; }
+
+    .feature-pill:hover {
+      background: rgba(255,255,255,0.07);
+      border-color: rgba(249,115,22,0.25);
+      transform: translateX(4px);
+    }
+
+    .pill-icon {
+      width: 38px; height: 38px;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .pill-icon.o { background: var(--orange-glow); border: 1px solid rgba(249,115,22,0.3); color: var(--orange); }
+    .pill-icon.b { background: var(--blue-glow);   border: 1px solid rgba(59,130,246,0.3);  color: var(--blue-light); }
+    .pill-icon.t { background: rgba(20,184,166,0.15); border: 1px solid rgba(20,184,166,0.3); color: var(--teal); }
+
+    .pill-text strong {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .pill-text span {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    /* Bottom testimonial */
+    .left-testimonial {
+      position: relative;
+      z-index: 1;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+    }
+
+    .testimonial-text {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.7;
+      font-style: italic;
+      margin-bottom: 14px;
+    }
+
+    .testimonial-author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .t-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--orange), var(--blue));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: #fff; font-weight: 700;
+    }
+
+    .t-name { font-size: 13px; font-weight: 600; }
+    .t-role { font-size: 11px; color: var(--text-muted); }
+
+    .t-stars { margin-left: auto; color: #fbbf24; font-size: 12px; }
+
+    /* =========================================
+       RIGHT PANEL — signup form
+    ========================================= */
+    .right-panel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 52px;
+      background: var(--bg-base);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .right-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 80% 20%, rgba(249,115,22,0.06) 0%, transparent 60%),
+                  radial-gradient(ellipse at 20% 80%, rgba(59,130,246,0.06) 0%, transparent 60%);
+      pointer-events: none;
+    }
+
+    .form-container {
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+      z-index: 1;
+      animation: fadeInUp 0.6s ease both;
+    }
+
+    /* Header */
+    .form-header { margin-bottom: 32px; }
+
+    .form-title {
+      font-family: var(--font-display);
+      font-size: 30px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .form-title span {
+      background: linear-gradient(135deg, var(--orange), var(--blue-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .form-subtitle {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .form-subtitle a {
+      color: var(--orange);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .form-subtitle a:hover { text-decoration: underline; }
+
+    /* ---- Progress steps ---- */
+    .steps-bar {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin-bottom: 32px;
+    }
+
+    .step {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+      position: relative;
+    }
+
+    .step:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 36px;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      height: 1px;
+      background: var(--border);
+      z-index: 0;
+      transition: var(--transition);
+    }
+
+    .step.done:not(:last-child)::after {
+      background: var(--orange);
+    }
+
+    .step-num {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--bg-base);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: var(--font-display);
+      color: var(--text-muted);
+      flex-shrink: 0;
+      transition: var(--transition);
+      position: relative;
+      z-index: 1;
+    }
+
+    .step.active .step-num {
+      background: var(--orange);
+      border-color: var(--orange);
+      color: #fff;
+      box-shadow: 0 0 14px var(--orange-glow);
+    }
+
+    .step.done .step-num {
+      background: var(--orange);
+      border-color: var(--orange);
+      color: #fff;
+    }
+
+    .step-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+
+    .step.active .step-label { color: var(--text-primary); }
+    .step.done .step-label { color: var(--orange-light); }
+
+    /* ---- Connect wallet button (big) ---- */
+    .wallet-connect-btn {
+      width: 100%;
+      background: linear-gradient(135deg, rgba(249,115,22,0.12), rgba(59,130,246,0.12));
+      border: 1px dashed rgba(249,115,22,0.4);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .wallet-connect-btn:hover {
+      background: linear-gradient(135deg, rgba(249,115,22,0.18), rgba(59,130,246,0.18));
+      border-style: solid;
+      border-color: var(--orange);
+    }
+
+    .wallet-connect-icon {
+      width: 44px; height: 44px;
+      background: var(--orange-glow);
+      border: 1px solid rgba(249,115,22,0.3);
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      color: var(--orange);
+      flex-shrink: 0;
+    }
+
+    .wallet-connect-text strong {
+      display: block;
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .wallet-connect-text span {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .wallet-connect-arrow {
+      margin-left: auto;
+      color: var(--text-muted);
+      font-size: 14px;
+      transition: var(--transition);
+    }
+
+    .wallet-connect-btn:hover .wallet-connect-arrow {
+      color: var(--orange);
+      transform: translateX(3px);
+    }
+
+    /* Divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .divider-text {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+      white-space: nowrap;
+    }
+
+    /* ---- Form fields ---- */
+    .form-body { display: flex; flex-direction: column; gap: 16px; }
+
+    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+    .field-group { display: flex; flex-direction: column; gap: 6px; }
+
+    .field-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .field-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .field-icon {
+      position: absolute;
+      left: 14px;
+      color: var(--text-muted);
+      font-size: 14px;
+      pointer-events: none;
+      transition: var(--transition);
+    }
+
+    .field-input {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 14px 12px 40px;
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 14px;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .field-input::placeholder { color: var(--text-muted); }
+
+    .field-input:focus {
+      border-color: var(--orange);
+      background: rgba(249,115,22,0.05);
+      box-shadow: 0 0 0 3px var(--orange-glow);
+    }
+
+    .field-input:focus ~ .field-icon,
+    .field-wrap:focus-within .field-icon { color: var(--orange); }
+
+    .field-input.error { border-color: #ef4444; background: rgba(239,68,68,0.05); }
+    .field-input.success { border-color: var(--teal); background: rgba(20,184,166,0.05); }
+
+    .field-toggle {
+      position: absolute;
+      right: 14px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 14px;
+      transition: var(--transition);
+      padding: 0;
+    }
+    .field-toggle:hover { color: var(--orange); }
+
+    .field-error {
+      font-size: 11px;
+      color: #ef4444;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .field-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    /* Select field */
+    .field-select {
+      width: 100%;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px 14px 12px 40px;
+      color: var(--text-primary);
+      font-family: var(--font-body);
+      font-size: 14px;
+      outline: none;
+      appearance: none;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .field-select:focus {
+      border-color: var(--orange);
+      background: rgba(249,115,22,0.05);
+      box-shadow: 0 0 0 3px var(--orange-glow);
+    }
+
+    .field-select option { background: #0d1422; color: var(--text-primary); }
+
+    .select-arrow {
+      position: absolute;
+      right: 14px;
+      color: var(--text-muted);
+      font-size: 12px;
+      pointer-events: none;
+    }
+
+    /* Password strength */
+    .strength-bar {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      margin-top: 6px;
+    }
+
+    .strength-seg {
+      height: 3px;
+      border-radius: 99px;
+      background: var(--border);
+      transition: background 0.4s ease;
+    }
+
+    .strength-seg.weak   { background: #ef4444; }
+    .strength-seg.fair   { background: #f59e0b; }
+    .strength-seg.good   { background: var(--blue-light); }
+    .strength-seg.strong { background: var(--teal); }
+
+    .strength-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Role selector */
+    .role-selector {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .role-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      padding: 16px 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .role-option input[type="radio"] { display: none; }
+
+    .role-option:hover {
+      border-color: rgba(249,115,22,0.3);
+      background: rgba(249,115,22,0.05);
+    }
+
+    .role-option.selected {
+      border-color: var(--orange);
+      background: var(--orange-glow);
+    }
+
+    .role-icon {
+      width: 42px; height: 42px;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      transition: var(--transition);
+    }
+
+    .role-option.selected .role-icon {
+      background: var(--orange-glow);
+      border-color: var(--border-focus);
+      color: var(--orange);
+    }
+
+    .role-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-align: center;
+    }
+
+    .role-option.selected .role-label { color: var(--orange); }
+
+    /* Checkbox */
+    .checkbox-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .custom-checkbox {
+      width: 18px; height: 18px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      background: rgba(255,255,255,0.04);
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: var(--transition);
+      margin-top: 2px;
+    }
+
+    .custom-checkbox.checked {
+      background: var(--orange);
+      border-color: var(--orange);
+    }
+
+    .custom-checkbox i { font-size: 10px; color: #fff; display: none; }
+    .custom-checkbox.checked i { display: block; }
+
+    .checkbox-text {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .checkbox-text a { color: var(--orange); text-decoration: none; }
+    .checkbox-text a:hover { text-decoration: underline; }
+
+    /* ---- Submit button ---- */
+    .submit-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--orange), #e05a0a);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 15px;
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 0 28px var(--orange-glow);
+      transition: var(--transition);
+      margin-top: 8px;
+    }
+
+    .submit-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 42px rgba(249,115,22,0.5);
+    }
+
+    .submit-btn:active { transform: translateY(0); }
+
+    .submit-btn.loading .btn-text { display: none; }
+    .submit-btn .btn-spinner { display: none; }
+    .submit-btn.loading .btn-spinner { display: block; animation: spin 0.8s linear infinite; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Social signup */
+    .social-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 11px;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: var(--font-body);
+    }
+
+    .social-btn:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.15);
+      color: var(--text-primary);
+    }
+
+    .social-btn i { font-size: 16px; }
+    .social-btn .fa-google { color: #ea4335; }
+    .social-btn .fa-apple  { color: var(--text-primary); }
+
+    /* Trust badges */
+    .trust-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .trust-item i { font-size: 12px; color: var(--teal); }
+
+    /* =========================================
+       ANIMATIONS
+    ========================================= */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(-16px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* Field entry animation */
+    .field-group { animation: fadeInUp 0.5s ease both; }
+    .field-group:nth-child(1) { animation-delay: 0.05s; }
+    .field-group:nth-child(2) { animation-delay: 0.10s; }
+    .field-group:nth-child(3) { animation-delay: 0.15s; }
+    .field-group:nth-child(4) { animation-delay: 0.20s; }
+    .field-group:nth-child(5) { animation-delay: 0.25s; }
+
+    /* =========================================
+       RESPONSIVE
+    ========================================= */
+    @media (max-width: 900px) {
+      .page-wrapper { grid-template-columns: 1fr; }
+      .left-panel { display: none; }
+      .right-panel { padding: 40px 24px; }
+    }
+
+    @media (max-width: 480px) {
+      .field-row { grid-template-columns: 1fr; }
+      .social-row { grid-template-columns: 1fr; }
+      .role-selector { grid-template-columns: 1fr 1fr; }
+    }
+
+    /* =========================================
+       SUCCESS STATE
+    ========================================= */
+    .success-overlay {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      gap: 18px;
+      padding: 40px 20px;
+      animation: fadeInUp 0.5s ease;
+    }
+
+    .success-overlay.show { display: flex; }
+
+    .success-icon-wrap {
+      width: 80px; height: 80px;
+      border-radius: 50%;
+      background: rgba(20,184,166,0.15);
+      border: 2px solid var(--teal);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 34px;
+      color: var(--teal);
+      box-shadow: 0 0 30px rgba(20,184,166,0.3);
+    }
+
+    .success-title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 800;
+    }
+
+    .success-sub { font-size: 14px; color: var(--text-secondary); line-height: 1.6; }
+
+    .back-to-login {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: linear-gradient(135deg, var(--orange), #e05a0a);
+      color: #fff;
+      border: none;
+      border-radius: var(--radius-md);
+      padding: 12px 28px;
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 0 22px var(--orange-glow);
+      text-decoration: none;
+      transition: var(--transition);
+    }
+
+    .back-to-login:hover { transform: translateY(-2px); box-shadow: 0 0 36px rgba(249,115,22,0.5); }
+  </style>
+</head>
+<body>
+
+  <div class="page-wrapper">
+
+    <!-- ===========================
+         LEFT PANEL
+    ============================ -->
+    <div class="left-panel">
+      <!-- Decorative orbs -->
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+
+      <!-- Logo -->
+      <a href="index.html" class="logo">
+        <div class="logo-icon"><i class="fas fa-globe-americas"></i></div>
+        <span class="logo-text">Smart<span>Tour</span></span>
+      </a>
+
+      <!-- Main copy -->
+      <div class="left-center">
+        <div class="left-eyebrow"><i class="fas fa-shield-halved"></i> Blockchain-Secured Platform</div>
+        <h1 class="left-heading">
+          Your Journey Starts<br>with a <span class="grad">Trusted Identity</span>
+        </h1>
+        <p class="left-sub">
+          Join thousands of verified travelers who use SmartTour to explore the world securely — with blockchain-backed credentials, real-time navigation, and multilingual support in every destination.
+        </p>
+
+        <div class="features-list">
+          <div class="feature-pill">
+            <div class="pill-icon o"><i class="fas fa-fingerprint"></i></div>
+            <div class="pill-text">
+              <strong>Blockchain Identity</strong>
+              <span>Immutable, fraud-proof digital ID on IPFS</span>
+            </div>
+          </div>
+          <div class="feature-pill">
+            <div class="pill-icon b"><i class="fas fa-map-location-dot"></i></div>
+            <div class="pill-text">
+              <strong>Smart Exploration</strong>
+              <span>AI-curated nearby places & live navigation</span>
+            </div>
+          </div>
+          <div class="feature-pill">
+            <div class="pill-icon t"><i class="fas fa-language"></i></div>
+            <div class="pill-text">
+              <strong>Real-time Translator</strong>
+              <span>120+ languages, voice input, offline mode</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Testimonial -->
+      <div class="left-testimonial">
+        <p class="testimonial-text">
+          "SmartTour made crossing borders so seamless — my blockchain ID was accepted instantly at Tokyo airport. The translator saved me in a dozen situations!"
+        </p>
+        <div class="testimonial-author">
+          <div class="t-avatar">MK</div>
+          <div>
+            <div class="t-name">Maria Kowalski</div>
+            <div class="t-role">Travel Blogger · Warsaw, Poland</div>
+          </div>
+          <div class="t-stars">
+            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+            <i class="fas fa-star"></i><i class="fas fa-star"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ===========================
+         RIGHT PANEL — FORM
+    ============================ -->
+    <div class="right-panel">
+      <div class="form-container" id="formContainer">
+
+        <!-- Header -->
+        <div class="form-header">
+          <h2 class="form-title">Create Your <span>Account</span></h2>
+          <p class="form-subtitle">Already have an account? <a href="#">Sign in here</a></p>
+        </div>
+
+        <!-- Progress steps -->
+        <div class="steps-bar">
+          <div class="step active" id="step1">
+            <div class="step-num" id="s1n">1</div>
+            <span class="step-label">Account</span>
+          </div>
+          <div class="step" id="step2">
+            <div class="step-num" id="s2n">2</div>
+            <span class="step-label">Identity</span>
+          </div>
+          <div class="step" id="step3">
+            <div class="step-num" id="s3n">3</div>
+            <span class="step-label">Wallet</span>
+          </div>
+        </div>
+
+        <!-- STEP 1: Account info -->
+        <div id="stepView1">
+
+          <!-- Wallet connect CTA -->
+          <button class="wallet-connect-btn" type="button">
+            <div class="wallet-connect-icon"><i class="fas fa-wallet"></i></div>
+            <div class="wallet-connect-text">
+              <strong>Connect Crypto Wallet</strong>
+              <span>MetaMask, WalletConnect, Coinbase Wallet</span>
+            </div>
+            <div class="wallet-connect-arrow"><i class="fas fa-chevron-right"></i></div>
+          </button>
+
+          <!-- Divider -->
+          <div class="divider">
+            <div class="divider-line"></div>
+            <span class="divider-text">or sign up with email</span>
+            <div class="divider-line"></div>
+          </div>
+
+          <!-- Form -->
+          <div class="form-body" id="formBody1">
+
+            <!-- Name row -->
+            <div class="field-row">
+              <div class="field-group">
+                <label class="field-label">First Name</label>
+                <div class="field-wrap">
+                  <i class="fas fa-user field-icon"></i>
+                  <input type="text" class="field-input" id="firstName" placeholder="Elena" autocomplete="given-name">
+                </div>
+              </div>
+              <div class="field-group">
+                <label class="field-label">Last Name</label>
+                <div class="field-wrap">
+                  <i class="fas fa-user field-icon"></i>
+                  <input type="text" class="field-input" id="lastName" placeholder="Vasquez" autocomplete="family-name">
+                </div>
+              </div>
+            </div>
+
+            <!-- Email -->
+            <div class="field-group">
+              <label class="field-label">Email Address</label>
+              <div class="field-wrap">
+                <i class="fas fa-envelope field-icon"></i>
+                <input type="email" class="field-input" id="email" placeholder="elena@example.com" autocomplete="email">
+              </div>
+            </div>
+
+            <!-- Phone -->
+            <div class="field-group">
+              <label class="field-label">Phone Number</label>
+              <div class="field-wrap">
+                <i class="fas fa-phone field-icon"></i>
+                <input type="tel" class="field-input" id="phone" placeholder="+1 (555) 000-0000" autocomplete="tel">
+              </div>
+            </div>
+
+            <!-- Nationality -->
+            <div class="field-group">
+              <label class="field-label">Nationality</label>
+              <div class="field-wrap">
+                <i class="fas fa-flag field-icon"></i>
+                <select class="field-select" id="nationality">
+                  <option value="" disabled selected>Select your country</option>
+                  <option>🇺🇸 United States</option>
+                  <option>🇬🇧 United Kingdom</option>
+                  <option>🇪🇸 Spain</option>
+                  <option>🇫🇷 France</option>
+                  <option>🇩🇪 Germany</option>
+                  <option>🇮🇳 India</option>
+                  <option>🇯🇵 Japan</option>
+                  <option>🇨🇳 China</option>
+                  <option>🇧🇷 Brazil</option>
+                  <option>🇦🇺 Australia</option>
+                  <option>🇰🇷 South Korea</option>
+                  <option>🇮🇹 Italy</option>
+                  <option>🇨🇦 Canada</option>
+                  <option>🇸🇦 Saudi Arabia</option>
+                </select>
+                <i class="fas fa-chevron-down select-arrow"></i>
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="field-group">
+              <label class="field-label">Password</label>
+              <div class="field-wrap">
+                <i class="fas fa-lock field-icon"></i>
+                <input type="password" class="field-input" id="password" placeholder="Min. 8 characters" autocomplete="new-password">
+                <button type="button" class="field-toggle" id="togglePwd" aria-label="Toggle password">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+              <!-- Strength meter -->
+              <div class="strength-bar" id="strengthBar">
+                <div class="strength-seg" id="seg1"></div>
+                <div class="strength-seg" id="seg2"></div>
+                <div class="strength-seg" id="seg3"></div>
+                <div class="strength-seg" id="seg4"></div>
+              </div>
+              <div class="strength-label" id="strengthLabel">Enter a password to check strength</div>
+            </div>
+
+            <!-- Confirm password -->
+            <div class="field-group">
+              <label class="field-label">Confirm Password</label>
+              <div class="field-wrap">
+                <i class="fas fa-lock field-icon"></i>
+                <input type="password" class="field-input" id="confirmPwd" placeholder="Re-enter your password" autocomplete="new-password">
+                <button type="button" class="field-toggle" id="toggleConfirm" aria-label="Toggle confirm password">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Terms checkbox -->
+            <div class="field-group">
+              <div class="checkbox-row">
+                <div class="custom-checkbox" id="termsCheck" role="checkbox" tabindex="0" aria-checked="false">
+                  <i class="fas fa-check"></i>
+                </div>
+                <div class="checkbox-text">
+                  I agree to the <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a> of SmartTour. I consent to my data being secured on-chain.
+                </div>
+              </div>
+            </div>
+
+          </div><!-- /form-body -->
+
+          <!-- Submit -->
+          <button class="submit-btn" id="nextBtn1" type="button">
+            <span class="btn-text"><i class="fas fa-arrow-right"></i> Continue to Identity Verification</span>
+            <i class="fas fa-circle-notch btn-spinner"></i>
+          </button>
+
+          <!-- Social login -->
+          <div class="divider" style="margin-top:20px;margin-bottom:14px;">
+            <div class="divider-line"></div>
+            <span class="divider-text">or continue with</span>
+            <div class="divider-line"></div>
+          </div>
+
+          <div class="social-row">
+            <button class="social-btn" type="button"><i class="fab fa-google"></i> Google</button>
+            <button class="social-btn" type="button"><i class="fab fa-apple"></i> Apple</button>
+          </div>
+
+        </div><!-- /stepView1 -->
+
+
+        <!-- STEP 2: Identity Type -->
+        <div id="stepView2" style="display:none;">
+
+          <div class="form-body">
+            <div class="field-group">
+              <label class="field-label" style="font-size:13px;text-transform:none;letter-spacing:0;color:var(--text-secondary);font-weight:400;">
+                Choose your traveler role — this determines how your blockchain identity is scoped and verified.
+              </label>
+            </div>
+
+            <!-- Role selector -->
+            <div class="field-group">
+              <label class="field-label">Traveler Type</label>
+              <div class="role-selector" id="roleSelector">
+                <div class="role-option selected" data-role="tourist">
+                  <input type="radio" name="role" value="tourist" checked>
+                  <div class="role-icon"><i class="fas fa-passport"></i></div>
+                  <div class="role-label">Tourist</div>
+                </div>
+                <div class="role-option" data-role="business">
+                  <input type="radio" name="role" value="business">
+                  <div class="role-icon"><i class="fas fa-briefcase"></i></div>
+                  <div class="role-label">Business</div>
+                </div>
+                <div class="role-option" data-role="student">
+                  <input type="radio" name="role" value="student">
+                  <div class="role-icon"><i class="fas fa-graduation-cap"></i></div>
+                  <div class="role-label">Student</div>
+                </div>
+                <div class="role-option" data-role="diplomat">
+                  <input type="radio" name="role" value="diplomat">
+                  <div class="role-icon"><i class="fas fa-landmark"></i></div>
+                  <div class="role-label">Diplomat</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Passport number -->
+            <div class="field-group">
+              <label class="field-label">Passport / National ID Number</label>
+              <div class="field-wrap">
+                <i class="fas fa-id-card field-icon"></i>
+                <input type="text" class="field-input" id="passport" placeholder="e.g. A12345678">
+              </div>
+              <div class="field-hint">Your document number is hashed before storing on-chain. We never store raw data.</div>
+            </div>
+
+            <!-- Date of birth -->
+            <div class="field-group">
+              <label class="field-label">Date of Birth</label>
+              <div class="field-wrap">
+                <i class="fas fa-calendar field-icon"></i>
+                <input type="date" class="field-input" id="dob" style="color-scheme: dark;">
+              </div>
+            </div>
+
+            <!-- Document upload -->
+            <div class="field-group">
+              <label class="field-label">Upload Identity Document</label>
+              <div class="upload-zone" id="uploadZone2" style="
+                border: 2px dashed rgba(249,115,22,0.35);
+                border-radius: var(--radius-md);
+                padding: 28px;
+                text-align: center;
+                cursor: pointer;
+                transition: var(--transition);
+              ">
+                <i class="fas fa-cloud-arrow-up" style="font-size:28px;color:var(--orange);display:block;margin-bottom:8px;"></i>
+                <p style="color:var(--text-secondary);font-size:13px;"><strong style="color:var(--orange);">Click to upload</strong> or drag & drop</p>
+                <p style="color:var(--text-muted);font-size:11px;margin-top:6px;">Passport, National ID · PDF, JPG, PNG (max 10MB)</p>
+              </div>
+            </div>
+
+            <!-- Hash preview -->
+            <div class="field-group">
+              <label class="field-label">Document Hash (IPFS)</label>
+              <div style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;display:flex;align-items:center;gap:10px;">
+                <i class="fas fa-link" style="color:var(--teal);font-size:13px;flex-shrink:0;"></i>
+                <span style="font-family:'Courier New',monospace;font-size:11px;color:var(--text-muted);flex:1;">Awaiting document upload...</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div style="display:flex;gap:12px;margin-top:8px;">
+            <button class="submit-btn" type="button" id="backBtn2"
+              style="background:rgba(255,255,255,0.06);box-shadow:none;border:1px solid var(--border);flex:0 0 auto;width:auto;padding:15px 22px;">
+              <i class="fas fa-arrow-left"></i>
+            </button>
+            <button class="submit-btn" id="nextBtn2" type="button" style="flex:1;">
+              <span class="btn-text"><i class="fas fa-arrow-right"></i> Connect Wallet</span>
+              <i class="fas fa-circle-notch btn-spinner"></i>
+            </button>
+          </div>
+
+        </div><!-- /stepView2 -->
+
+
+        <!-- STEP 3: Wallet -->
+        <div id="stepView3" style="display:none;">
+
+          <div class="form-body">
+            <div class="field-group">
+              <label class="field-label" style="font-size:13px;text-transform:none;letter-spacing:0;color:var(--text-secondary);font-weight:400;">
+                Connect a crypto wallet to mint your Blockchain Travel Identity NFT and enable secure on-chain authentication.
+              </label>
+            </div>
+
+            <!-- Wallet options -->
+            <div class="field-group">
+              <label class="field-label">Choose Wallet Provider</label>
+              <div style="display:flex;flex-direction:column;gap:10px;" id="walletList">
+
+                <div class="wallet-connect-btn" data-wallet="metamask" style="margin-bottom:0;">
+                  <div class="wallet-connect-icon" style="background:rgba(245,150,50,0.15);border-color:rgba(245,150,50,0.3);">
+                    <i class="fas fa-fox" style="color:#f59622;"></i>
+                  </div>
+                  <div class="wallet-connect-text">
+                    <strong>MetaMask</strong>
+                    <span>Most popular Ethereum wallet</span>
+                  </div>
+                  <div class="wallet-connect-arrow"><i class="fas fa-chevron-right"></i></div>
+                </div>
+
+                <div class="wallet-connect-btn" data-wallet="walletconnect" style="margin-bottom:0;">
+                  <div class="wallet-connect-icon" style="background:rgba(59,130,246,0.15);border-color:rgba(59,130,246,0.3);">
+                    <i class="fas fa-link" style="color:var(--blue-light);"></i>
+                  </div>
+                  <div class="wallet-connect-text">
+                    <strong>WalletConnect</strong>
+                    <span>Connect via QR code or deep link</span>
+                  </div>
+                  <div class="wallet-connect-arrow"><i class="fas fa-chevron-right"></i></div>
+                </div>
+
+                <div class="wallet-connect-btn" data-wallet="coinbase" style="margin-bottom:0;">
+                  <div class="wallet-connect-icon" style="background:rgba(20,108,255,0.12);border-color:rgba(20,108,255,0.3);">
+                    <i class="fas fa-c" style="color:#1652f0;font-weight:900;"></i>
+                  </div>
+                  <div class="wallet-connect-text">
+                    <strong>Coinbase Wallet</strong>
+                    <span>Self-custody wallet by Coinbase</span>
+                  </div>
+                  <div class="wallet-connect-arrow"><i class="fas fa-chevron-right"></i></div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Wallet address field -->
+            <div class="field-group">
+              <label class="field-label">Or Paste Wallet Address</label>
+              <div class="field-wrap">
+                <i class="fas fa-wallet field-icon"></i>
+                <input type="text" class="field-input" id="walletAddr" placeholder="0x...">
+              </div>
+            </div>
+
+            <!-- NFT preview card -->
+            <div class="field-group">
+              <label class="field-label">Identity NFT Preview</label>
+              <div style="
+                background: linear-gradient(135deg, rgba(15,25,45,0.95), rgba(12,20,38,0.95));
+                border: 1px solid rgba(59,130,246,0.3);
+                border-radius: var(--radius-lg);
+                padding: 22px;
+                box-shadow: 0 0 40px rgba(59,130,246,0.1);
+              ">
+                <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+                  <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--orange),var(--blue));display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;">
+                    <i class="fas fa-user"></i>
+                  </div>
+                  <div>
+                    <div style="font-family:var(--font-display);font-weight:700;font-size:15px;" id="nftName">Your Name</div>
+                    <div style="font-size:12px;color:var(--teal);">Blockchain Verified Traveler</div>
+                  </div>
+                  <div style="margin-left:auto;background:rgba(20,184,166,0.15);border:1px solid rgba(20,184,166,0.4);color:var(--teal);font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px;">
+                    <i class="fas fa-check-circle"></i> NFT
+                  </div>
+                </div>
+                <div style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-family:'Courier New',monospace;font-size:10px;color:var(--text-muted);word-break:break-all;">
+                  TOKEN ID: Minting pending wallet connection...
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div style="display:flex;gap:12px;margin-top:8px;">
+            <button class="submit-btn" type="button" id="backBtn3"
+              style="background:rgba(255,255,255,0.06);box-shadow:none;border:1px solid var(--border);flex:0 0 auto;width:auto;padding:15px 22px;">
+              <i class="fas fa-arrow-left"></i>
+            </button>
+            <button class="submit-btn" id="finalBtn" type="button" style="flex:1;">
+              <span class="btn-text"><i class="fas fa-cube"></i> Mint Identity & Create Account</span>
+              <i class="fas fa-circle-notch btn-spinner"></i>
+            </button>
+          </div>
+
+        </div><!-- /stepView3 -->
+
+
+        <!-- SUCCESS STATE -->
+        <div class="success-overlay" id="successView">
+          <div class="success-icon-wrap"><i class="fas fa-check"></i></div>
+          <h2 class="success-title">Welcome to SmartTour!</h2>
+          <p class="success-sub">
+            Your blockchain identity has been verified and your Travel NFT has been minted. You're ready to explore the world securely.
+          </p>
+          <a href="index.html" class="back-to-login">
+            <i class="fas fa-globe-americas"></i> Start Exploring
+          </a>
+        </div>
+
+        <!-- Trust row -->
+        <div class="trust-row">
+          <div class="trust-item"><i class="fas fa-lock"></i> End-to-End Encrypted</div>
+          <div class="trust-item"><i class="fas fa-shield-halved"></i> GDPR Compliant</div>
+          <div class="trust-item"><i class="fas fa-cube"></i> On-Chain Verified</div>
+        </div>
+
+      </div><!-- /form-container -->
+    </div><!-- /right-panel -->
+
+  </div><!-- /page-wrapper -->
+
+
+  <!-- =============================================
+       JAVASCRIPT
+  ============================================= -->
+  <script>
+    /* ================================================
+       STEP NAVIGATION
+    ================================================ */
+    let currentStep = 1;
+    const totalSteps = 3;
+
+    function goToStep(step) {
+      // Hide all step views
+      for (let i = 1; i <= totalSteps; i++) {
+        document.getElementById('stepView' + i).style.display = 'none';
+      }
+      // Show current
+      document.getElementById('stepView' + step).style.display = 'block';
+
+      // Update progress bar
+      for (let i = 1; i <= totalSteps; i++) {
+        const el = document.getElementById('step' + i);
+        const num = document.getElementById('s' + i + 'n');
+        el.classList.remove('active', 'done');
+        if (i < step) {
+          el.classList.add('done');
+          num.innerHTML = '<i class="fas fa-check" style="font-size:11px;"></i>';
+        } else if (i === step) {
+          el.classList.add('active');
+          num.textContent = i;
+        } else {
+          num.textContent = i;
+        }
+      }
+
+      currentStep = step;
+    }
+
+    /* Step 1 → 2 */
+    document.getElementById('nextBtn1').addEventListener('click', function() {
+      const btn = this;
+      btn.classList.add('loading');
+      setTimeout(() => {
+        btn.classList.remove('loading');
+        goToStep(2);
+      }, 1000);
+    });
+
+    /* Step 2 → 1 */
+    document.getElementById('backBtn2').addEventListener('click', () => goToStep(1));
+
+    /* Step 2 → 3 */
+    document.getElementById('nextBtn2').addEventListener('click', function() {
+      const btn = this;
+      btn.classList.add('loading');
+      // Update NFT preview name
+      const first = document.getElementById('firstName').value || 'Your';
+      const last  = document.getElementById('lastName').value  || 'Name';
+      document.getElementById('nftName').textContent = first + ' ' + last;
+      setTimeout(() => {
+        btn.classList.remove('loading');
+        goToStep(3);
+      }, 1000);
+    });
+
+    /* Step 3 → 2 */
+    document.getElementById('backBtn3').addEventListener('click', () => goToStep(2));
+
+    /* Final submit → success */
+    document.getElementById('finalBtn').addEventListener('click', function() {
+      const btn = this;
+      btn.classList.add('loading');
+      setTimeout(() => {
+        btn.classList.remove('loading');
+        // Hide all steps + show success
+        for (let i = 1; i <= totalSteps; i++) {
+          const sv = document.getElementById('stepView' + i);
+          if (sv) sv.style.display = 'none';
+        }
+        document.querySelector('.steps-bar').style.display = 'none';
+        document.querySelector('.form-header').style.display = 'none';
+        document.getElementById('successView').classList.add('show');
+      }, 2000);
+    });
+
+
+    /* ================================================
+       PASSWORD TOGGLE
+    ================================================ */
+    function setupToggle(inputId, btnId) {
+      const input = document.getElementById(inputId);
+      const btn   = document.getElementById(btnId);
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        const show = input.type === 'password';
+        input.type = show ? 'text' : 'password';
+        btn.querySelector('i').className = show ? 'fas fa-eye-slash' : 'fas fa-eye';
+      });
+    }
+
+    setupToggle('password', 'togglePwd');
+    setupToggle('confirmPwd', 'toggleConfirm');
+
+
+    /* ================================================
+       PASSWORD STRENGTH METER
+    ================================================ */
+    const pwdInput = document.getElementById('password');
+    const segs = [
+      document.getElementById('seg1'),
+      document.getElementById('seg2'),
+      document.getElementById('seg3'),
+      document.getElementById('seg4')
+    ];
+    const strengthLabel = document.getElementById('strengthLabel');
+
+    function calcStrength(pwd) {
+      let score = 0;
+      if (pwd.length >= 8)  score++;
+      if (/[A-Z]/.test(pwd)) score++;
+      if (/[0-9]/.test(pwd)) score++;
+      if (/[^A-Za-z0-9]/.test(pwd)) score++;
+      return score;
+    }
+
+    pwdInput.addEventListener('input', () => {
+      const val = pwdInput.value;
+      const score = val.length === 0 ? 0 : calcStrength(val);
+      const labels  = ['', 'Weak – add uppercase & numbers', 'Fair – add symbols', 'Good – almost there!', 'Strong – excellent password'];
+      const classes = ['', 'weak', 'fair', 'good', 'strong'];
+
+      segs.forEach((seg, i) => {
+        seg.className = 'strength-seg';
+        if (i < score) seg.classList.add(classes[score]);
+      });
+
+      strengthLabel.textContent = val.length === 0 ? 'Enter a password to check strength' : labels[score];
+      strengthLabel.style.color = ['var(--text-muted)', '#ef4444', '#f59e0b', 'var(--blue-light)', 'var(--teal)'][score];
+    });
+
+
+    /* ================================================
+       CONFIRM PASSWORD MATCH
+    ================================================ */
+    document.getElementById('confirmPwd').addEventListener('input', function() {
+      const pwd  = document.getElementById('password').value;
+      if (this.value.length > 0) {
+        if (this.value === pwd) {
+          this.classList.remove('error');
+          this.classList.add('success');
+        } else {
+          this.classList.remove('success');
+          this.classList.add('error');
+        }
+      } else {
+        this.classList.remove('error', 'success');
+      }
+    });
+
+
+    /* ================================================
+       TERMS CHECKBOX
+    ================================================ */
+    const termsCheck = document.getElementById('termsCheck');
+    termsCheck.addEventListener('click', () => {
+      const checked = termsCheck.classList.toggle('checked');
+      termsCheck.setAttribute('aria-checked', checked);
+    });
+    termsCheck.addEventListener('keydown', (e) => {
+      if (e.key === ' ' || e.key === 'Enter') {
+        e.preventDefault();
+        termsCheck.click();
+      }
+    });
+
+
+    /* ================================================
+       ROLE SELECTOR
+    ================================================ */
+    document.querySelectorAll('.role-option').forEach(option => {
+      option.addEventListener('click', () => {
+        document.querySelectorAll('.role-option').forEach(o => o.classList.remove('selected'));
+        option.classList.add('selected');
+        option.querySelector('input[type="radio"]').checked = true;
+      });
+    });
+
+
+    /* ================================================
+       WALLET PROVIDER SELECTION
+    ================================================ */
+    document.querySelectorAll('#walletList .wallet-connect-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('#walletList .wallet-connect-btn').forEach(b => {
+          b.style.borderColor = 'rgba(249,115,22,0.4)';
+          b.style.background  = 'linear-gradient(135deg, rgba(249,115,22,0.12), rgba(59,130,246,0.12))';
+        });
+        btn.style.borderColor = 'var(--orange)';
+        btn.style.borderStyle = 'solid';
+        btn.style.background  = 'linear-gradient(135deg, rgba(249,115,22,0.2), rgba(59,130,246,0.2))';
+
+        const wallet = btn.dataset.wallet;
+        document.getElementById('walletAddr').placeholder = '0x... (Connected via ' + wallet + ')';
+      });
+    });
+
+
+    /* ================================================
+       UPLOAD ZONE INTERACTION
+    ================================================ */
+    const uploadZone2 = document.getElementById('uploadZone2');
+    if (uploadZone2) {
+      uploadZone2.addEventListener('click', () => {
+        // Would open file dialog in production
+        uploadZone2.innerHTML = `
+          <i class="fas fa-check-circle" style="font-size:28px;color:var(--teal);display:block;margin-bottom:8px;"></i>
+          <p style="color:var(--teal);font-size:13px;font-weight:600;">Document ready for upload</p>
+          <p style="color:var(--text-muted);font-size:11px;margin-top:4px;">passport_scan.pdf · 2.4MB</p>
+        `;
+        uploadZone2.style.borderColor = 'var(--teal)';
+        uploadZone2.style.background  = 'rgba(20,184,166,0.06)';
+      });
+
+      uploadZone2.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadZone2.style.borderColor = 'var(--orange)';
+        uploadZone2.style.background  = 'var(--orange-glow)';
+      });
+
+      uploadZone2.addEventListener('dragleave', () => {
+        uploadZone2.style.borderColor = 'rgba(249,115,22,0.35)';
+        uploadZone2.style.background  = 'transparent';
+      });
+    }
+
+
+    /* ================================================
+       REAL-TIME NFT NAME PREVIEW
+    ================================================ */
+    ['firstName', 'lastName'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.addEventListener('input', () => {
+          const first = document.getElementById('firstName').value || 'Your';
+          const last  = document.getElementById('lastName').value  || 'Name';
+          const nftName = document.getElementById('nftName');
+          if (nftName) nftName.textContent = first + ' ' + last;
+        });
+      }
+    });
+  </script>
+</body>
+</html>

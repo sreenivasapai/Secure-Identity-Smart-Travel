@@ -1,0 +1,1660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In – SmartTour</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    /* ═══════════════════════════════════════════
+       DESIGN TOKENS
+    ═══════════════════════════════════════════ */
+    :root {
+      --ink:         #05090f;
+      --surface:     #090e18;
+      --panel:       #0c1220;
+      --card:        rgba(255,255,255,0.042);
+      --card-h:      rgba(255,255,255,0.072);
+
+      --fire:        #f97316;
+      --fire-lite:   #fb923c;
+      --fire-dim:    rgba(249,115,22,0.16);
+      --fire-glow:   rgba(249,115,22,0.38);
+
+      --sky:         #38bdf8;
+      --sky-dim:     rgba(56,189,248,0.14);
+      --sky-glow:    rgba(56,189,248,0.28);
+
+      --mint:        #2dd4bf;
+      --mint-dim:    rgba(45,212,191,0.13);
+
+      --danger:      #f87171;
+      --success:     #34d399;
+      --warn:        #fbbf24;
+
+      --t1:          #eef4ff;
+      --t2:          #8fa9c9;
+      --t3:          #445870;
+      --t4:          #253242;
+
+      --border:      rgba(255,255,255,0.065);
+      --border-fire: rgba(249,115,22,0.42);
+
+      --r-xs:  6px;
+      --r-sm:  10px;
+      --r-md:  14px;
+      --r-lg:  22px;
+      --r-xl:  34px;
+      --r-max: 999px;
+
+      --ff-h: 'Syne', sans-serif;
+      --ff-b: 'DM Sans', sans-serif;
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--ff-b);
+      background: var(--ink);
+      color: var(--t1);
+      min-height: 100vh;
+      overflow: hidden;
+    }
+
+    @media (max-width: 768px) { body { overflow-y: auto; } }
+
+    ::selection { background: var(--fire-dim); color: var(--fire-lite); }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--ink); }
+    ::-webkit-scrollbar-thumb { background: var(--fire); border-radius: 3px; }
+
+    /* ═══════════════════════════════════════════
+       PAGE SPLIT LAYOUT
+    ═══════════════════════════════════════════ */
+    .page {
+      display: grid;
+      grid-template-columns: 1fr 520px;
+      min-height: 100vh;
+    }
+
+    /* ═══════════════════════════════════════════
+       LEFT — IMMERSIVE VISUAL PANEL
+    ═══════════════════════════════════════════ */
+    .visual-panel {
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 40px 52px;
+      background: linear-gradient(160deg, #060d1a 0%, #030810 100%);
+    }
+
+    /* Animated grid */
+    .visual-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(56,189,248,.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56,189,248,.045) 1px, transparent 1px);
+      background-size: 52px 52px;
+      animation: gridFlow 25s linear infinite;
+      pointer-events: none;
+    }
+
+    @keyframes gridFlow {
+      0%   { background-position: 0 0; }
+      100% { background-position: 52px 52px; }
+    }
+
+    /* Top gradient line */
+    .visual-panel::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, var(--fire), var(--sky), var(--mint), transparent);
+      animation: scanLine 4s ease-in-out infinite;
+    }
+
+    @keyframes scanLine {
+      0%, 100% { opacity: .5; }
+      50%       { opacity: 1; }
+    }
+
+    /* Orbs */
+    .v-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(90px);
+      pointer-events: none;
+    }
+    .v-orb-1 { width:550px; height:550px; background:var(--fire); opacity:.09; top:-140px; left:-100px; animation: breathe 11s ease-in-out infinite; }
+    .v-orb-2 { width:450px; height:450px; background:var(--sky);  opacity:.08; bottom:-120px; right:-80px; animation: breathe 14s ease-in-out 2s infinite; }
+    .v-orb-3 { width:250px; height:250px; background:var(--mint); opacity:.07; top:45%; left:45%; animation: breathe 9s ease-in-out 1s infinite; }
+
+    @keyframes breathe {
+      0%,100% { transform: scale(1);    opacity:.08; }
+      50%      { transform: scale(1.15); opacity:.14; }
+    }
+
+    /* Floating particles */
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      pointer-events: none;
+      animation: rise linear infinite;
+    }
+
+    @keyframes rise {
+      0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+      8%   { opacity: .7; }
+      92%  { opacity: .15; }
+      100% { transform: translateY(-5vh) scale(1.8); opacity: 0; }
+    }
+
+    /* ── LOGO ── */
+    .v-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      position: relative;
+      z-index: 2;
+    }
+
+    .v-logo-gem {
+      width: 44px; height: 44px;
+      border-radius: 13px;
+      background: linear-gradient(135deg, var(--fire), var(--sky));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; color: #fff;
+      box-shadow: 0 0 24px var(--fire-glow);
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+    }
+
+    .v-logo-gem::after {
+      content: '';
+      position: absolute;
+      top: -60%; left: -60%;
+      width: 220%; height: 220%;
+      background: linear-gradient(45deg, transparent 40%, rgba(255,255,255,.18) 55%, transparent 70%);
+      animation: gemShine 3.5s ease-in-out infinite;
+    }
+
+    @keyframes gemShine {
+      0%   { transform: translate(-30%, -30%) rotate(0deg); }
+      100% { transform: translate(50%, 50%) rotate(0deg); }
+    }
+
+    .v-logo-name {
+      font-family: var(--ff-h);
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--t1);
+      letter-spacing: -0.02em;
+    }
+    .v-logo-name b { color: var(--fire); font-weight: 800; }
+
+    /* ── CENTER CONTENT ── */
+    .v-center {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .v-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--fire-lite);
+      background: var(--fire-dim);
+      border: 1px solid rgba(249,115,22,.28);
+      padding: 6px 14px;
+      border-radius: var(--r-max);
+      width: fit-content;
+      margin-bottom: 24px;
+    }
+
+    .v-eyebrow-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--fire-lite);
+      animation: dotPulse 2s ease-in-out infinite;
+    }
+
+    @keyframes dotPulse {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:.4; transform:scale(.7); }
+    }
+
+    .v-headline {
+      font-family: var(--ff-h);
+      font-size: clamp(36px, 3.8vw, 56px);
+      font-weight: 800;
+      line-height: 1.08;
+      margin-bottom: 20px;
+    }
+
+    .v-headline .grad {
+      background: linear-gradient(135deg, var(--fire) 0%, var(--fire-lite) 45%, var(--sky) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .v-sub {
+      font-size: 15px;
+      color: var(--t2);
+      line-height: 1.75;
+      max-width: 440px;
+      margin-bottom: 44px;
+    }
+
+    /* Animated stats */
+    .v-stats {
+      display: flex;
+      gap: 36px;
+      margin-bottom: 48px;
+    }
+
+    .v-stat {
+      animation: fadeUp .6s var(--ease) both;
+    }
+    .v-stat:nth-child(1) { animation-delay:.1s; }
+    .v-stat:nth-child(2) { animation-delay:.2s; }
+    .v-stat:nth-child(3) { animation-delay:.3s; }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(12px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .v-stat-num {
+      font-family: var(--ff-h);
+      font-size: 28px;
+      font-weight: 800;
+    }
+    .v-stat-num .accent { color: var(--fire); }
+
+    .v-stat-lbl {
+      font-size: 11px;
+      color: var(--t3);
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      margin-top: 3px;
+    }
+
+    /* Travel highlight cards */
+    .v-cards {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      max-width: 480px;
+    }
+
+    .v-card {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: all .3s var(--ease);
+      animation: fadeUp .6s var(--ease) both;
+    }
+
+    .v-card:nth-child(1){ animation-delay:.15s; }
+    .v-card:nth-child(2){ animation-delay:.25s; }
+    .v-card:nth-child(3){ animation-delay:.35s; }
+    .v-card:nth-child(4){ animation-delay:.45s; }
+
+    .v-card:hover {
+      background: rgba(255,255,255,.07);
+      border-color: rgba(249,115,22,.22);
+      transform: translateX(4px);
+    }
+
+    .v-card-icon {
+      width: 36px; height: 36px;
+      border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .ic-fire  { background: var(--fire-dim); border:1px solid rgba(249,115,22,.3); color: var(--fire); }
+    .ic-sky   { background: var(--sky-dim);  border:1px solid rgba(56,189,248,.3); color: var(--sky); }
+    .ic-mint  { background: var(--mint-dim); border:1px solid rgba(45,212,191,.3); color: var(--mint); }
+    .ic-warn  { background: rgba(251,191,36,.12); border:1px solid rgba(251,191,36,.3); color: var(--warn); }
+
+    .v-card-text strong {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--t1);
+    }
+    .v-card-text span { font-size: 11px; color: var(--t3); }
+
+    /* ── BOTTOM ── */
+    .v-bottom {
+      position: relative;
+      z-index: 2;
+    }
+
+    .v-testimonial {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 18px 20px;
+    }
+
+    .v-quote {
+      font-size: 13px;
+      font-style: italic;
+      color: var(--t2);
+      line-height: 1.65;
+      margin-bottom: 14px;
+    }
+
+    .v-author {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .v-avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--fire), var(--sky));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; font-weight: 700; color: #fff;
+      flex-shrink: 0;
+    }
+
+    .v-author-name { font-size: 13px; font-weight: 600; }
+    .v-author-role { font-size: 11px; color: var(--t3); }
+    .v-stars { margin-left: auto; color: var(--warn); font-size: 12px; letter-spacing: 2px; }
+
+    /* ═══════════════════════════════════════════
+       RIGHT — SIGN IN FORM PANEL
+    ═══════════════════════════════════════════ */
+    .form-panel {
+      background: var(--panel);
+      border-left: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 48px 52px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Subtle radial glow behind form */
+    .form-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(249,115,22,.07) 0%, transparent 55%),
+        radial-gradient(ellipse at 50% 100%, rgba(56,189,248,.05) 0%, transparent 55%);
+      pointer-events: none;
+    }
+
+    .form-inner {
+      width: 100%;
+      max-width: 380px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── FORM HEADER ── */
+    .form-header { margin-bottom: 32px; text-align: center; }
+
+    .form-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--sky);
+      background: var(--sky-dim);
+      border: 1px solid rgba(56,189,248,.25);
+      padding: 5px 13px;
+      border-radius: var(--r-max);
+      margin-bottom: 14px;
+    }
+
+    .form-title {
+      font-family: var(--ff-h);
+      font-size: 30px;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 8px;
+    }
+
+    .form-title span {
+      background: linear-gradient(120deg, var(--fire), var(--sky));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .form-sub {
+      font-size: 13px;
+      color: var(--t2);
+    }
+    .form-sub a {
+      color: var(--fire-lite);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .form-sub a:hover { text-decoration: underline; }
+
+    /* ── AUTH MODE TABS ── */
+    .auth-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 4px;
+      margin-bottom: 26px;
+      gap: 4px;
+    }
+
+    .auth-tab {
+      padding: 10px;
+      border-radius: var(--r-sm);
+      border: none;
+      background: transparent;
+      color: var(--t3);
+      font-family: var(--ff-h);
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .25s var(--ease);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+    }
+
+    .auth-tab.active {
+      background: linear-gradient(135deg, var(--fire), #d85d08);
+      color: #fff;
+      box-shadow: 0 4px 18px rgba(249,115,22,.35);
+    }
+
+    .auth-tab:not(.active):hover {
+      background: rgba(255,255,255,.05);
+      color: var(--t1);
+    }
+
+    /* ── WALLET SIGN IN OPTIONS ── */
+    #walletView { display: none; }
+    #walletView.visible { display: block; animation: panelIn .3s var(--ease) both; }
+    #emailView  { display: block; }
+    #emailView.visible  { display: block; animation: panelIn .3s var(--ease) both; }
+    #emailView.hidden,
+    #walletView.hidden  { display: none; }
+
+    @keyframes panelIn {
+      from { opacity:0; transform:translateY(10px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    .wallet-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 4px; }
+
+    .wallet-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255,255,255,.04);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all .25s var(--ease);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .wallet-row::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, var(--fire-dim), transparent);
+      opacity: 0;
+      transition: opacity .3s;
+    }
+
+    .wallet-row:hover { border-color: rgba(249,115,22,.35); transform: translateX(3px); }
+    .wallet-row:hover::before { opacity: 1; }
+
+    .wallet-row.connected {
+      border-color: var(--success);
+      background: rgba(52,211,153,.06);
+    }
+
+    .w-icon {
+      width: 42px; height: 42px;
+      border-radius: var(--r-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+    .wi-mm { background: rgba(245,150,50,.15); border:1px solid rgba(245,150,50,.3); }
+    .wi-wc { background: var(--sky-dim);        border:1px solid rgba(56,189,248,.3); }
+    .wi-cb { background: rgba(22,82,240,.12);   border:1px solid rgba(22,82,240,.28); }
+    .wi-lk { background: var(--mint-dim);       border:1px solid rgba(45,212,191,.3); }
+
+    .w-info { flex: 1; position: relative; z-index: 1; }
+    .w-name { font-family: var(--ff-h); font-size: 14px; font-weight: 700; color: var(--t1); }
+    .w-desc { font-size: 11px; color: var(--t3); margin-top: 2px; }
+
+    .w-arrow {
+      color: var(--t4);
+      font-size: 14px;
+      transition: all .25s;
+      position: relative;
+      z-index: 1;
+    }
+    .wallet-row:hover .w-arrow { color: var(--fire); transform: translateX(3px); }
+
+    .w-check {
+      color: var(--success);
+      font-size: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* OR divider */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 22px 0;
+    }
+    .div-bar { flex:1; height:1px; background:var(--border); }
+    .div-txt { font-size:11px; color:var(--t4); letter-spacing:.06em; white-space:nowrap; }
+
+    /* ── EMAIL FORM ── */
+    .fields { display: flex; flex-direction: column; gap: 16px; margin-bottom: 4px; }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+
+    .field-lbl {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+      color: var(--t2);
+    }
+
+    .field-wrap { position: relative; display: flex; align-items: center; }
+
+    .f-ico {
+      position: absolute;
+      left: 14px;
+      color: var(--t4);
+      font-size: 14px;
+      pointer-events: none;
+      transition: color .25s;
+    }
+
+    .fi {
+      width: 100%;
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 13px 14px 13px 42px;
+      color: var(--t1);
+      font-family: var(--ff-b);
+      font-size: 14px;
+      outline: none;
+      transition: border-color .25s, box-shadow .25s, background .25s;
+    }
+
+    .fi::placeholder { color: var(--t4); }
+
+    .fi:focus {
+      border-color: var(--fire);
+      background: rgba(249,115,22,.05);
+      box-shadow: 0 0 0 3px var(--fire-dim);
+    }
+
+    .fi:focus ~ .f-ico,
+    .field-wrap:focus-within .f-ico { color: var(--fire); }
+
+    .fi.err  { border-color: var(--danger);  background: rgba(248,113,113,.05); box-shadow: 0 0 0 3px rgba(248,113,113,.12); }
+    .fi.ok   { border-color: var(--success); background: rgba(52,211,153,.05);  box-shadow: 0 0 0 3px rgba(52,211,153,.1); }
+
+    .fi-toggle {
+      position: absolute;
+      right: 12px;
+      background: none;
+      border: none;
+      color: var(--t3);
+      cursor: pointer;
+      font-size: 14px;
+      padding: 4px;
+      transition: color .2s;
+    }
+    .fi-toggle:hover { color: var(--fire); }
+
+    /* Remember / Forgot */
+    .remember-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 4px 0;
+    }
+
+    .check-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .chk {
+      width: 18px; height: 18px;
+      border-radius: 5px;
+      border: 1.5px solid var(--border);
+      background: rgba(255,255,255,.04);
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s;
+      flex-shrink: 0;
+    }
+
+    .chk.on {
+      background: var(--fire);
+      border-color: var(--fire);
+      box-shadow: 0 0 10px var(--fire-glow);
+    }
+
+    .chk i { font-size: 9px; color: #fff; display:none; }
+    .chk.on i { display:block; }
+
+    .chk-label { font-size: 13px; color: var(--t2); user-select: none; }
+
+    .forgot-link {
+      font-size: 13px;
+      color: var(--fire-lite);
+      text-decoration: none;
+      font-weight: 600;
+      transition: opacity .2s;
+    }
+    .forgot-link:hover { opacity: .75; }
+
+    /* ── SUBMIT BTN ── */
+    .btn-submit {
+      width: 100%;
+      background: linear-gradient(135deg, var(--fire), #d85d06);
+      border: none;
+      border-radius: var(--r-md);
+      padding: 15px;
+      color: #fff;
+      font-family: var(--ff-h);
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 0 32px rgba(249,115,22,.32);
+      transition: all .25s var(--ease);
+      position: relative;
+      overflow: hidden;
+      margin-top: 8px;
+    }
+
+    .btn-submit::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -100%;
+      width: 60%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.16), transparent);
+      transition: left .45s var(--ease);
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 48px rgba(249,115,22,.48);
+    }
+    .btn-submit:hover::after { left: 150%; }
+    .btn-submit:active { transform: translateY(0); }
+
+    .btn-submit.loading .btn-text { display:none; }
+    .btn-submit .spinner { display:none; animation: spin .7s linear infinite; }
+    .btn-submit.loading .spinner { display:inline-block; }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* social */
+    .social-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .soc-btn {
+      background: rgba(255,255,255,.04);
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      padding: 12px;
+      color: var(--t2);
+      font-family: var(--ff-b);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      gap: 8px;
+      transition: all .25s;
+    }
+    .soc-btn:hover {
+      background: rgba(255,255,255,.08);
+      border-color: rgba(255,255,255,.14);
+      color: var(--t1);
+      transform: translateY(-1px);
+    }
+    .soc-btn i { font-size: 16px; }
+    .fa-google { color: #ea4335 !important; }
+    .fa-apple  { color: var(--t1) !important; }
+
+    /* ── ERROR / SUCCESS MESSAGES ── */
+    .msg {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      border-radius: var(--r-md);
+      padding: 12px 14px;
+      font-size: 13px;
+      font-weight: 500;
+      margin-bottom: 14px;
+      animation: msgIn .3s var(--ease) both;
+    }
+    @keyframes msgIn {
+      from { opacity:0; transform:translateY(-6px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    .msg.show { display: flex; }
+    .msg.err-msg  { background: rgba(248,113,113,.12); border:1px solid rgba(248,113,113,.25); color: var(--danger); }
+    .msg.ok-msg   { background: rgba(52,211,153,.12);  border:1px solid rgba(52,211,153,.25);  color: var(--success); }
+    .msg.info-msg { background: var(--sky-dim);         border:1px solid rgba(56,189,248,.25);  color: var(--sky); }
+
+    /* ── 2FA PANEL ── */
+    .twofa-panel {
+      display: none;
+      animation: panelIn .35s var(--ease) both;
+    }
+    .twofa-panel.show { display: block; }
+
+    .otp-row {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin: 24px 0;
+    }
+
+    .otp-box {
+      width: 52px; height: 58px;
+      background: rgba(255,255,255,.05);
+      border: 1.5px solid var(--border);
+      border-radius: var(--r-md);
+      text-align: center;
+      font-family: var(--ff-h);
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--t1);
+      outline: none;
+      transition: all .25s;
+      caret-color: var(--fire);
+    }
+
+    .otp-box:focus {
+      border-color: var(--fire);
+      background: rgba(249,115,22,.07);
+      box-shadow: 0 0 0 3px var(--fire-dim);
+    }
+
+    .otp-box.filled {
+      border-color: var(--fire);
+      background: rgba(249,115,22,.08);
+      color: var(--fire-lite);
+    }
+
+    /* Trust badges */
+    .trust-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 26px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+      flex-wrap: wrap;
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      color: var(--t4);
+    }
+    .trust-item i { font-size: 12px; color: var(--mint); }
+
+    /* ── SUCCESS OVERLAY ── */
+    .success-overlay {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 16px;
+      animation: panelIn .5s var(--ease) both;
+    }
+    .success-overlay.show { display: flex; }
+
+    .success-ring {
+      width: 86px; height: 86px;
+      border-radius: 50%;
+      background: var(--mint-dim);
+      border: 2px solid var(--mint);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 34px; color: var(--mint);
+      box-shadow: 0 0 40px rgba(45,212,191,.28);
+      animation: popIn .5s .15s var(--ease) both;
+    }
+
+    @keyframes popIn {
+      from { transform: scale(.5) rotate(-15deg); opacity:0; }
+      to   { transform: scale(1) rotate(0deg);    opacity:1; }
+    }
+
+    .success-title {
+      font-family: var(--ff-h);
+      font-size: 26px;
+      font-weight: 800;
+    }
+
+    .success-sub { font-size: 14px; color: var(--t2); line-height: 1.6; max-width: 320px; }
+
+    .btn-go {
+      background: linear-gradient(135deg, var(--fire), #d85d06);
+      border: none;
+      border-radius: var(--r-md);
+      padding: 13px 32px;
+      color: #fff;
+      font-family: var(--ff-h);
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex; align-items: center; gap: 9px;
+      box-shadow: 0 0 26px rgba(249,115,22,.35);
+      transition: all .25s;
+      text-decoration: none;
+    }
+    .btn-go:hover { transform: translateY(-2px); box-shadow: 0 0 40px rgba(249,115,22,.5); }
+
+    /* ═══════════════════════════════════════════
+       RESPONSIVE
+    ═══════════════════════════════════════════ */
+    @media (max-width: 1024px) {
+      .page { grid-template-columns: 1fr 480px; }
+      .v-cards { grid-template-columns: 1fr; }
+      .form-panel { padding: 40px 36px; }
+    }
+
+    @media (max-width: 768px) {
+      .page { grid-template-columns: 1fr; min-height: unset; }
+      .visual-panel { display: none; }
+      .form-panel {
+        min-height: 100vh;
+        padding: 40px 24px;
+        border-left: none;
+      }
+    }
+
+    /* ── ENTRANCE ANIMATIONS ── */
+    .form-inner { animation: fadeUp .5s var(--ease) both; }
+
+    .field:nth-child(1) { animation: fadeUp .4s .08s var(--ease) both; }
+    .field:nth-child(2) { animation: fadeUp .4s .14s var(--ease) both; }
+    .field:nth-child(3) { animation: fadeUp .4s .20s var(--ease) both; }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════
+       PAGE WRAPPER
+  ══════════════════════════════════════════ -->
+  <div class="page">
+
+    <!-- ═════════════════════════════════════
+         LEFT — VISUAL PANEL
+    ═════════════════════════════════════ -->
+    <div class="visual-panel">
+
+      <!-- Ambient orbs -->
+      <div class="v-orb v-orb-1"></div>
+      <div class="v-orb v-orb-2"></div>
+      <div class="v-orb v-orb-3"></div>
+
+      <!-- Particles (created via JS) -->
+      <div id="particlesHost"></div>
+
+      <!-- LOGO -->
+      <a href="index.html" class="v-logo">
+        <div class="v-logo-gem"><i class="fas fa-globe-americas"></i></div>
+        <span class="v-logo-name">Smart<b>Tour</b></span>
+      </a>
+
+      <!-- CENTER -->
+      <div class="v-center">
+        <div class="v-eyebrow">
+          <div class="v-eyebrow-dot"></div>
+          Blockchain Travel Platform
+        </div>
+
+        <h1 class="v-headline">
+          Welcome<br>Back,<br><span class="grad">Explorer.</span>
+        </h1>
+
+        <p class="v-sub">
+          Sign in to your SmartTour account to access your blockchain identity, continue your journey, and discover verified destinations worldwide.
+        </p>
+
+        <!-- Stats -->
+        <div class="v-stats">
+          <div class="v-stat">
+            <div class="v-stat-num">48K<span class="accent">+</span></div>
+            <div class="v-stat-lbl">Active Travelers</div>
+          </div>
+          <div class="v-stat">
+            <div class="v-stat-num">120<span class="accent">+</span></div>
+            <div class="v-stat-lbl">Countries</div>
+          </div>
+          <div class="v-stat">
+            <div class="v-stat-num">0.2<span class="accent">s</span></div>
+            <div class="v-stat-lbl">ID Verify Speed</div>
+          </div>
+        </div>
+
+        <!-- Feature highlights -->
+        <div class="v-cards">
+          <div class="v-card">
+            <div class="v-card-icon ic-fire"><i class="fas fa-fingerprint"></i></div>
+            <div class="v-card-text">
+              <strong>Blockchain Identity</strong>
+              <span>Zero-knowledge verified</span>
+            </div>
+          </div>
+          <div class="v-card">
+            <div class="v-card-icon ic-sky"><i class="fas fa-map-location-dot"></i></div>
+            <div class="v-card-text">
+              <strong>Smart Explore</strong>
+              <span>AI-curated destinations</span>
+            </div>
+          </div>
+          <div class="v-card">
+            <div class="v-card-icon ic-mint"><i class="fas fa-language"></i></div>
+            <div class="v-card-text">
+              <strong>Live Translator</strong>
+              <span>120+ languages, voice</span>
+            </div>
+          </div>
+          <div class="v-card">
+            <div class="v-card-icon ic-warn"><i class="fas fa-shield-halved"></i></div>
+            <div class="v-card-text">
+              <strong>Travel Insurance</strong>
+              <span>On-chain verified claims</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM TESTIMONIAL -->
+      <div class="v-bottom">
+        <div class="v-testimonial">
+          <p class="v-quote">
+            "SmartTour's blockchain identity let me cross three borders without touching a single paper document. The future of travel is here."
+          </p>
+          <div class="v-author">
+            <div class="v-avatar">JS</div>
+            <div>
+              <div class="v-author-name">James Sato</div>
+              <div class="v-author-role">Digital Nomad · 38 countries visited</div>
+            </div>
+            <div class="v-stars">★★★★★</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- ═════════════════════════════════════
+         RIGHT — FORM PANEL
+    ═════════════════════════════════════ -->
+    <div class="form-panel">
+      <div class="form-inner" id="formInner">
+
+        <!-- Form Header -->
+        <div class="form-header">
+          <div class="form-tag"><i class="fas fa-lock"></i> Secure Authentication</div>
+          <h2 class="form-title">Sign <span>In</span></h2>
+          <p class="form-sub">
+            New to SmartTour? <a href="smarttour-signup.html">Create an account</a>
+          </p>
+        </div>
+
+        <!-- Status message -->
+        <div class="msg err-msg" id="errMsg"><i class="fas fa-circle-exclamation"></i><span id="errTxt">Invalid credentials. Please try again.</span></div>
+        <div class="msg ok-msg"  id="okMsg" ><i class="fas fa-circle-check"></i><span id="okTxt">Identity verified! Redirecting...</span></div>
+        <div class="msg info-msg" id="infoMsg"><i class="fas fa-circle-info"></i><span id="infoTxt">Check your authenticator app for the code.</span></div>
+
+        <!-- Auth Mode Tabs -->
+        <div class="auth-tabs">
+          <button class="auth-tab active" id="tabEmail" onclick="switchTab('email')">
+            <i class="fas fa-envelope"></i> Email
+          </button>
+          <button class="auth-tab" id="tabWallet" onclick="switchTab('wallet')">
+            <i class="fas fa-wallet"></i> Wallet
+          </button>
+        </div>
+
+        <!-- ── EMAIL VIEW ── -->
+        <div id="emailView">
+          <div class="fields">
+
+            <!-- Email -->
+            <div class="field">
+              <label class="field-lbl">Email Address</label>
+              <div class="field-wrap">
+                <i class="fas fa-envelope f-ico"></i>
+                <input type="email" class="fi" id="emailInput" placeholder="you@example.com" autocomplete="email" />
+              </div>
+            </div>
+
+            <!-- Password -->
+            <div class="field">
+              <label class="field-lbl">Password</label>
+              <div class="field-wrap">
+                <i class="fas fa-lock f-ico"></i>
+                <input type="password" class="fi" id="pwdInput" placeholder="Enter your password" autocomplete="current-password" />
+                <button type="button" class="fi-toggle" id="pwdToggle" aria-label="Toggle password">
+                  <i class="fas fa-eye"></i>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Remember / Forgot -->
+          <div class="remember-row" style="margin: 14px 0;">
+            <div class="check-group" onclick="toggleRemember()">
+              <div class="chk" id="rememberChk"><i class="fas fa-check"></i></div>
+              <span class="chk-label">Remember me</span>
+            </div>
+            <a href="#" class="forgot-link" onclick="showForgot(event)">Forgot password?</a>
+          </div>
+
+          <!-- Submit -->
+          <button class="btn-submit" id="loginBtn" type="button" onclick="handleLogin()">
+            <span class="btn-text"><i class="fas fa-arrow-right-to-bracket"></i> Sign In</span>
+            <i class="fas fa-circle-notch spinner"></i>
+          </button>
+
+          <!-- OR -->
+          <div class="divider">
+            <div class="div-bar"></div>
+            <span class="div-txt">or continue with</span>
+            <div class="div-bar"></div>
+          </div>
+
+          <!-- Social -->
+          <div class="social-row">
+            <button class="soc-btn" type="button" onclick="handleSocialLogin('Google')">
+              <i class="fab fa-google"></i> Google
+            </button>
+            <button class="soc-btn" type="button" onclick="handleSocialLogin('Apple')">
+              <i class="fab fa-apple"></i> Apple
+            </button>
+          </div>
+        </div><!-- /emailView -->
+
+        <!-- ── WALLET VIEW ── -->
+        <div id="walletView">
+          <p style="font-size:13px;color:var(--t2);margin-bottom:18px;line-height:1.6;">
+            Connect your crypto wallet to authenticate using your on-chain SmartTour identity NFT.
+          </p>
+
+          <div class="wallet-list">
+
+            <div class="wallet-row" id="wr-mm" onclick="connectWallet('mm')">
+              <div class="w-icon wi-mm">
+                <img src="https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg"
+                     onerror="this.outerHTML='<i class=\'fas fa-fox\' style=\'color:#f59622;font-size:22px;\'></i>'"
+                     style="width:26px;height:26px;" alt="MetaMask" />
+              </div>
+              <div class="w-info">
+                <div class="w-name">MetaMask</div>
+                <div class="w-desc">Connect using browser extension</div>
+              </div>
+              <i class="fas fa-chevron-right w-arrow" id="wa-mm"></i>
+            </div>
+
+            <div class="wallet-row" id="wr-wc" onclick="connectWallet('wc')">
+              <div class="w-icon wi-wc">
+                <i class="fas fa-link" style="color:#38bdf8;font-size:18px;"></i>
+              </div>
+              <div class="w-info">
+                <div class="w-name">WalletConnect</div>
+                <div class="w-desc">Scan QR code with mobile wallet</div>
+              </div>
+              <i class="fas fa-chevron-right w-arrow" id="wa-wc"></i>
+            </div>
+
+            <div class="wallet-row" id="wr-cb" onclick="connectWallet('cb')">
+              <div class="w-icon wi-cb">
+                <i class="fas fa-circle" style="color:#1652f0;font-size:20px;"></i>
+              </div>
+              <div class="w-info">
+                <div class="w-name">Coinbase Wallet</div>
+                <div class="w-desc">Self-custody by Coinbase</div>
+              </div>
+              <i class="fas fa-chevron-right w-arrow" id="wa-cb"></i>
+            </div>
+
+            <div class="wallet-row" id="wr-lk" onclick="connectWallet('lk')">
+              <div class="w-icon wi-lk">
+                <i class="fas fa-key" style="color:#2dd4bf;font-size:18px;"></i>
+              </div>
+              <div class="w-info">
+                <div class="w-name">Ledger / Hardware</div>
+                <div class="w-desc">Connect via USB or Bluetooth</div>
+              </div>
+              <i class="fas fa-chevron-right w-arrow" id="wa-lk"></i>
+            </div>
+
+          </div>
+
+          <!-- Manual address -->
+          <div class="divider">
+            <div class="div-bar"></div>
+            <span class="div-txt">or paste address</span>
+            <div class="div-bar"></div>
+          </div>
+
+          <div class="field">
+            <div class="field-wrap">
+              <i class="fas fa-wallet f-ico"></i>
+              <input type="text" class="fi" id="walletAddr" placeholder="0x... wallet address" />
+            </div>
+          </div>
+
+          <button class="btn-submit" style="margin-top:16px;" type="button" onclick="handleWalletLogin()">
+            <span class="btn-text"><i class="fas fa-shield-halved"></i> Verify On-Chain Identity</span>
+            <i class="fas fa-circle-notch spinner"></i>
+          </button>
+        </div><!-- /walletView -->
+
+        <!-- ── 2FA PANEL ── -->
+        <div class="twofa-panel" id="tfaPanel">
+          <div style="text-align:center; margin-bottom: 4px;">
+            <div style="font-size:28px; margin-bottom:12px;">🔐</div>
+            <div style="font-family:var(--ff-h); font-size:18px; font-weight:700; margin-bottom:8px;">Two-Factor Authentication</div>
+            <p style="font-size:13px;color:var(--t2);line-height:1.6;">
+              Enter the 6-digit code from your authenticator app or the SMS sent to your registered number.
+            </p>
+          </div>
+
+          <div class="otp-row">
+            <input class="otp-box" maxlength="1" type="text" inputmode="numeric" id="o1" />
+            <input class="otp-box" maxlength="1" type="text" inputmode="numeric" id="o2" />
+            <input class="otp-box" maxlength="1" type="text" inputmode="numeric" id="o3" />
+            <input class="otp-box" maxlength="1" type="text" inputmode="numeric" id="o4" />
+            <input class="otp-box" maxlength="1" type="text" inputmode="numeric" id="o5" />
+            <input class="otp-box" maxlength="1" type="text" inputmode="numeric" id="o6" />
+          </div>
+
+          <button class="btn-submit" type="button" id="tfaBtn" onclick="handleTFA()">
+            <span class="btn-text"><i class="fas fa-check-circle"></i> Verify Code</span>
+            <i class="fas fa-circle-notch spinner"></i>
+          </button>
+
+          <p style="text-align:center;margin-top:16px;font-size:13px;color:var(--t3);">
+            Didn't receive a code? <a href="#" style="color:var(--fire-lite);text-decoration:none;font-weight:600;" onclick="resendCode(event)">Resend</a>
+          </p>
+
+          <p style="text-align:center;margin-top:8px;font-size:13px;">
+            <a href="#" style="color:var(--t3);text-decoration:none;" onclick="cancelTFA(event)">
+              <i class="fas fa-arrow-left" style="font-size:11px;"></i> Back to sign in
+            </a>
+          </p>
+        </div><!-- /tfaPanel -->
+
+        <!-- ── SUCCESS OVERLAY ── -->
+        <div class="success-overlay" id="successView">
+          <div class="success-ring"><i class="fas fa-check"></i></div>
+          <div class="success-title">Identity Verified!</div>
+          <p class="success-sub">
+            Your blockchain identity has been confirmed. Welcome back to SmartTour — your journey continues.
+          </p>
+          <a href="index.html" class="btn-go">
+            <i class="fas fa-globe-americas"></i> Go to Dashboard
+          </a>
+        </div>
+
+        <!-- Trust badges -->
+        <div class="trust-row" id="trustRow">
+          <div class="trust-item"><i class="fas fa-lock"></i> TLS Encrypted</div>
+          <div class="trust-item"><i class="fas fa-cube"></i> On-Chain Auth</div>
+          <div class="trust-item"><i class="fas fa-shield-halved"></i> GDPR Safe</div>
+        </div>
+
+      </div><!-- /form-inner -->
+    </div><!-- /form-panel -->
+
+  </div><!-- /page -->
+
+
+  <!-- ══════════════════════════════════════════
+       JAVASCRIPT
+  ══════════════════════════════════════════ -->
+  <script>
+    /* ─────────────────────────────────────────
+       PARTICLES
+    ───────────────────────────────────────── */
+    (function spawnParticles() {
+      const host = document.getElementById('particlesHost');
+      if (!host) return;
+      const colors = ['#f97316','#38bdf8','#2dd4bf','#fb923c'];
+      for (let i = 0; i < 22; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 5 + 2;
+        p.style.cssText = `
+          width:${size}px; height:${size}px;
+          left:${Math.random()*100}%;
+          bottom:${Math.random()*-20}%;
+          background:${colors[Math.floor(Math.random()*colors.length)]};
+          animation-duration:${Math.random()*16+10}s;
+          animation-delay:${Math.random()*12}s;
+        `;
+        host.appendChild(p);
+      }
+    })();
+
+
+    /* ─────────────────────────────────────────
+       TAB SWITCHING (Email ↔ Wallet)
+    ───────────────────────────────────────── */
+    let activeTab = 'email';
+
+    function switchTab(tab) {
+      activeTab = tab;
+
+      document.getElementById('tabEmail').classList.toggle('active',  tab === 'email');
+      document.getElementById('tabWallet').classList.toggle('active', tab === 'wallet');
+
+      const ev = document.getElementById('emailView');
+      const wv = document.getElementById('walletView');
+
+      if (tab === 'email') {
+        ev.style.display = 'block';
+        wv.style.display = 'none';
+        ev.classList.add('visible');
+      } else {
+        wv.style.display = 'block';
+        ev.style.display = 'none';
+        wv.classList.add('visible');
+      }
+
+      clearMessages();
+    }
+
+
+    /* ─────────────────────────────────────────
+       MESSAGES
+    ───────────────────────────────────────── */
+    function showMsg(type, text) {
+      clearMessages();
+      const map = { err: 'errMsg', ok: 'okMsg', info: 'infoMsg' };
+      const txtMap = { err: 'errTxt', ok: 'okTxt', info: 'infoTxt' };
+      const el = document.getElementById(map[type]);
+      const tx = document.getElementById(txtMap[type]);
+      if (el && tx) { tx.textContent = text; el.classList.add('show'); }
+    }
+
+    function clearMessages() {
+      ['errMsg','okMsg','infoMsg'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.remove('show');
+      });
+    }
+
+
+    /* ─────────────────────────────────────────
+       PASSWORD TOGGLE
+    ───────────────────────────────────────── */
+    document.getElementById('pwdToggle').addEventListener('click', function() {
+      const inp = document.getElementById('pwdInput');
+      const ico = this.querySelector('i');
+      if (inp.type === 'password') {
+        inp.type = 'text';
+        ico.className = 'fas fa-eye-slash';
+      } else {
+        inp.type = 'password';
+        ico.className = 'fas fa-eye';
+      }
+    });
+
+
+    /* ─────────────────────────────────────────
+       REMEMBER ME CHECKBOX
+    ───────────────────────────────────────── */
+    let rememberMe = false;
+    function toggleRemember() {
+      rememberMe = !rememberMe;
+      document.getElementById('rememberChk').classList.toggle('on', rememberMe);
+    }
+
+
+    /* ─────────────────────────────────────────
+       FORGOT PASSWORD
+    ───────────────────────────────────────── */
+    function showForgot(e) {
+      e.preventDefault();
+      const email = document.getElementById('emailInput').value.trim();
+      if (email) {
+        showMsg('ok', `Password reset link sent to ${email}.`);
+      } else {
+        showMsg('info', 'Enter your email address above, then click Forgot Password.');
+        document.getElementById('emailInput').focus();
+      }
+    }
+
+
+    /* ─────────────────────────────────────────
+       FIELD VALIDATION
+    ───────────────────────────────────────── */
+    function validateEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function setFieldState(id, state) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.classList.remove('err', 'ok');
+      if (state) el.classList.add(state);
+    }
+
+
+    /* ─────────────────────────────────────────
+       EMAIL LOGIN HANDLER
+    ───────────────────────────────────────── */
+    function handleLogin() {
+      clearMessages();
+      const emailVal = document.getElementById('emailInput').value.trim();
+      const pwdVal   = document.getElementById('pwdInput').value;
+
+      let valid = true;
+
+      if (!validateEmail(emailVal)) {
+        setFieldState('emailInput', 'err');
+        showMsg('err', 'Please enter a valid email address.');
+        valid = false;
+      } else {
+        setFieldState('emailInput', 'ok');
+      }
+
+      if (pwdVal.length < 6) {
+        setFieldState('pwdInput', 'err');
+        if (valid) showMsg('err', 'Password must be at least 6 characters.');
+        valid = false;
+      } else {
+        setFieldState('pwdInput', 'ok');
+      }
+
+      if (!valid) return;
+
+      // Loading state
+      const btn = document.getElementById('loginBtn');
+      btn.classList.add('loading');
+
+      // Simulate auth → show 2FA
+      setTimeout(() => {
+        btn.classList.remove('loading');
+        show2FA();
+      }, 1400);
+    }
+
+
+    /* ─────────────────────────────────────────
+       2FA PANEL
+    ───────────────────────────────────────── */
+    function show2FA() {
+      clearMessages();
+      document.getElementById('emailView').style.display  = 'none';
+      document.getElementById('walletView').style.display = 'none';
+      document.querySelector('.auth-tabs').style.display  = 'none';
+      document.querySelector('.form-header').style.display = 'none';
+
+      const tfa = document.getElementById('tfaPanel');
+      tfa.classList.add('show');
+      showMsg('info', 'A 6-digit code has been sent to your email & phone.');
+
+      // Set up OTP boxes
+      const boxes = document.querySelectorAll('.otp-box');
+      boxes.forEach((box, idx) => {
+        box.addEventListener('input', (e) => {
+          box.value = box.value.replace(/\D/g, '').slice(-1);
+          if (box.value) {
+            box.classList.add('filled');
+            if (idx < boxes.length - 1) boxes[idx + 1].focus();
+          } else {
+            box.classList.remove('filled');
+          }
+        });
+
+        box.addEventListener('keydown', (e) => {
+          if (e.key === 'Backspace' && !box.value && idx > 0) {
+            boxes[idx - 1].focus();
+          }
+        });
+
+        box.addEventListener('paste', (e) => {
+          e.preventDefault();
+          const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g,'').slice(0, 6);
+          paste.split('').forEach((char, i) => {
+            if (boxes[i]) { boxes[i].value = char; boxes[i].classList.add('filled'); }
+          });
+          if (boxes[Math.min(paste.length, 5)]) boxes[Math.min(paste.length, 5)].focus();
+        });
+      });
+
+      if (boxes.length) boxes[0].focus();
+    }
+
+    function handleTFA() {
+      const boxes = document.querySelectorAll('.otp-box');
+      const code = Array.from(boxes).map(b => b.value).join('');
+
+      if (code.length < 6) {
+        showMsg('err', 'Please enter all 6 digits of your authentication code.');
+        return;
+      }
+
+      const btn = document.getElementById('tfaBtn');
+      btn.classList.add('loading');
+      clearMessages();
+
+      setTimeout(() => {
+        btn.classList.remove('loading');
+        showSuccess();
+      }, 1600);
+    }
+
+    function cancelTFA(e) {
+      e.preventDefault();
+      document.getElementById('tfaPanel').classList.remove('show');
+      document.querySelector('.auth-tabs').style.display = 'grid';
+      document.querySelector('.form-header').style.display = 'block';
+
+      // Restore active tab view
+      if (activeTab === 'email') {
+        document.getElementById('emailView').style.display = 'block';
+      } else {
+        document.getElementById('walletView').style.display = 'block';
+      }
+
+      // Clear OTP
+      document.querySelectorAll('.otp-box').forEach(b => { b.value = ''; b.classList.remove('filled'); });
+      clearMessages();
+    }
+
+    function resendCode(e) {
+      e.preventDefault();
+      showMsg('info', 'A new code has been sent to your email and phone.');
+    }
+
+
+    /* ─────────────────────────────────────────
+       WALLET CONNECT HANDLER
+    ───────────────────────────────────────── */
+    const walletNames = { mm: 'MetaMask', wc: 'WalletConnect', cb: 'Coinbase Wallet', lk: 'Ledger' };
+
+    function connectWallet(key) {
+      const row   = document.getElementById(`wr-${key}`);
+      const arrow = document.getElementById(`wa-${key}`);
+
+      // Reset all
+      ['mm','wc','cb','lk'].forEach(k => {
+        const r = document.getElementById(`wr-${k}`);
+        const a = document.getElementById(`wa-${k}`);
+        r.classList.remove('connected');
+        a.className = 'fas fa-chevron-right w-arrow';
+      });
+
+      // Mark as connecting
+      arrow.className = 'fas fa-circle-notch w-arrow';
+      arrow.style.animation = 'spin .7s linear infinite';
+
+      showMsg('info', `Connecting to ${walletNames[key]}...`);
+
+      setTimeout(() => {
+        row.classList.add('connected');
+        arrow.style.animation = '';
+        arrow.className = 'fas fa-circle-check w-check';
+        showMsg('ok', `${walletNames[key]} connected. Click "Verify On-Chain Identity" to continue.`);
+      }, 1500);
+    }
+
+    function handleWalletLogin() {
+      const addrInput = document.getElementById('walletAddr').value.trim();
+      const anyConnected = ['mm','wc','cb','lk'].some(k =>
+        document.getElementById(`wr-${k}`).classList.contains('connected')
+      );
+
+      if (!anyConnected && !addrInput) {
+        showMsg('err', 'Please connect a wallet or paste your wallet address.');
+        document.getElementById('walletAddr').classList.add('err');
+        setTimeout(() => document.getElementById('walletAddr').classList.remove('err'), 2000);
+        return;
+      }
+
+      clearMessages();
+      const btns = document.querySelectorAll('#walletView .btn-submit');
+      btns.forEach(b => b.classList.add('loading'));
+
+      setTimeout(() => {
+        btns.forEach(b => b.classList.remove('loading'));
+        showSuccess();
+      }, 2000);
+    }
+
+
+    /* ─────────────────────────────────────────
+       SOCIAL LOGIN
+    ───────────────────────────────────────── */
+    function handleSocialLogin(provider) {
+      showMsg('info', `Connecting to ${provider}...`);
+      setTimeout(() => {
+        clearMessages();
+        showSuccess();
+      }, 1800);
+    }
+
+
+    /* ─────────────────────────────────────────
+       SUCCESS STATE
+    ───────────────────────────────────────── */
+    function showSuccess() {
+      // Hide everything
+      ['emailView','walletView','tfaPanel'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) { el.style.display = 'none'; el.classList.remove('show'); }
+      });
+
+      const at = document.querySelector('.auth-tabs');
+      const fh = document.querySelector('.form-header');
+      const tr = document.getElementById('trustRow');
+      if (at) at.style.display = 'none';
+      if (fh) fh.style.display = 'none';
+      if (tr) tr.style.display = 'none';
+
+      clearMessages();
+      document.getElementById('successView').classList.add('show');
+    }
+
+
+    /* ─────────────────────────────────────────
+       LIVE FIELD VALIDATION
+    ───────────────────────────────────────── */
+    document.getElementById('emailInput').addEventListener('blur', function() {
+      if (this.value.trim()) {
+        setFieldState('emailInput', validateEmail(this.value.trim()) ? 'ok' : 'err');
+      }
+    });
+
+    document.getElementById('pwdInput').addEventListener('input', function() {
+      if (this.value.length > 0) {
+        setFieldState('pwdInput', this.value.length >= 6 ? 'ok' : 'err');
+      }
+    });
+
+    // Enter key submits
+    ['emailInput','pwdInput'].forEach(id => {
+      document.getElementById(id).addEventListener('keydown', e => {
+        if (e.key === 'Enter') handleLogin();
+      });
+    });
+  </script>
+
+</body>
+</html>
