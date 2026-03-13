@@ -989,14 +989,7 @@
             <div class="step-num" id="s1n">1</div>
             <span class="step-label">Account</span>
           </div>
-          <div class="step" id="step2">
-            <div class="step-num" id="s2n">2</div>
-            <span class="step-label">Identity</span>
-          </div>
-          <div class="step" id="step3">
-            <div class="step-num" id="s3n">3</div>
-            <span class="step-label">Wallet</span>
-          </div>
+          
         </div>
 
         <!-- STEP 1: Account info -->
@@ -1020,7 +1013,8 @@
           </div>
 
           <!-- Form -->
-          <div class="form-body" id="formBody1">
+          <form method="POST" action="/signup">
+            <div class="form-body" id="formBody1">
 
             <!-- Name row -->
             <div class="field-row">
@@ -1131,10 +1125,11 @@
           </div><!-- /form-body -->
 
           <!-- Submit -->
-          <button class="submit-btn" id="nextBtn1" type="button">
-            <span class="btn-text"><i class="fas fa-arrow-right"></i> Continue to Identity Verification</span>
+          <button class="submit-btn" type="submit">
+            <span class="btn-text"><i class="fas fa-arrow-right"></i> Submit</span>
             <i class="fas fa-circle-notch btn-spinner"></i>
           </button>
+          </form>
 
           <!-- Social login -->
           <div class="divider" style="margin-top:20px;margin-bottom:14px;">
@@ -1151,208 +1146,7 @@
         </div><!-- /stepView1 -->
 
 
-        <!-- STEP 2: Identity Type -->
-        <div id="stepView2" style="display:none;">
-
-          <div class="form-body">
-            <div class="field-group">
-              <label class="field-label" style="font-size:13px;text-transform:none;letter-spacing:0;color:var(--text-secondary);font-weight:400;">
-                Choose your traveler role — this determines how your blockchain identity is scoped and verified.
-              </label>
-            </div>
-
-            <!-- Role selector -->
-            <div class="field-group">
-              <label class="field-label">Traveler Type</label>
-              <div class="role-selector" id="roleSelector">
-                <div class="role-option selected" data-role="tourist">
-                  <input type="radio" name="role" value="tourist" checked>
-                  <div class="role-icon"><i class="fas fa-passport"></i></div>
-                  <div class="role-label">Tourist</div>
-                </div>
-                <div class="role-option" data-role="business">
-                  <input type="radio" name="role" value="business">
-                  <div class="role-icon"><i class="fas fa-briefcase"></i></div>
-                  <div class="role-label">Business</div>
-                </div>
-                <div class="role-option" data-role="student">
-                  <input type="radio" name="role" value="student">
-                  <div class="role-icon"><i class="fas fa-graduation-cap"></i></div>
-                  <div class="role-label">Student</div>
-                </div>
-                <div class="role-option" data-role="diplomat">
-                  <input type="radio" name="role" value="diplomat">
-                  <div class="role-icon"><i class="fas fa-landmark"></i></div>
-                  <div class="role-label">Diplomat</div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Passport number -->
-            <div class="field-group">
-              <label class="field-label">Passport / National ID Number</label>
-              <div class="field-wrap">
-                <i class="fas fa-id-card field-icon"></i>
-                <input type="text" class="field-input" id="passport" placeholder="e.g. A12345678">
-              </div>
-              <div class="field-hint">Your document number is hashed before storing on-chain. We never store raw data.</div>
-            </div>
-
-            <!-- Date of birth -->
-            <div class="field-group">
-              <label class="field-label">Date of Birth</label>
-              <div class="field-wrap">
-                <i class="fas fa-calendar field-icon"></i>
-                <input type="date" class="field-input" id="dob" style="color-scheme: dark;">
-              </div>
-            </div>
-
-            <!-- Document upload -->
-            <div class="field-group">
-              <label class="field-label">Upload Identity Document</label>
-              <div class="upload-zone" id="uploadZone2" style="
-                border: 2px dashed rgba(249,115,22,0.35);
-                border-radius: var(--radius-md);
-                padding: 28px;
-                text-align: center;
-                cursor: pointer;
-                transition: var(--transition);
-              ">
-                <i class="fas fa-cloud-arrow-up" style="font-size:28px;color:var(--orange);display:block;margin-bottom:8px;"></i>
-                <p style="color:var(--text-secondary);font-size:13px;"><strong style="color:var(--orange);">Click to upload</strong> or drag & drop</p>
-                <p style="color:var(--text-muted);font-size:11px;margin-top:6px;">Passport, National ID · PDF, JPG, PNG (max 10MB)</p>
-              </div>
-            </div>
-
-            <!-- Hash preview -->
-            <div class="field-group">
-              <label class="field-label">Document Hash (IPFS)</label>
-              <div style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 14px;display:flex;align-items:center;gap:10px;">
-                <i class="fas fa-link" style="color:var(--teal);font-size:13px;flex-shrink:0;"></i>
-                <span style="font-family:'Courier New',monospace;font-size:11px;color:var(--text-muted);flex:1;">Awaiting document upload...</span>
-              </div>
-            </div>
-
-          </div>
-
-          <div style="display:flex;gap:12px;margin-top:8px;">
-            <button class="submit-btn" type="button" id="backBtn2"
-              style="background:rgba(255,255,255,0.06);box-shadow:none;border:1px solid var(--border);flex:0 0 auto;width:auto;padding:15px 22px;">
-              <i class="fas fa-arrow-left"></i>
-            </button>
-            <button class="submit-btn" id="nextBtn2" type="button" style="flex:1;">
-              <span class="btn-text"><i class="fas fa-arrow-right"></i> Connect Wallet</span>
-              <i class="fas fa-circle-notch btn-spinner"></i>
-            </button>
-          </div>
-
-        </div><!-- /stepView2 -->
-
-
-        <!-- STEP 3: Wallet -->
-        <div id="stepView3" style="display:none;">
-
-          <div class="form-body">
-            <div class="field-group">
-              <label class="field-label" style="font-size:13px;text-transform:none;letter-spacing:0;color:var(--text-secondary);font-weight:400;">
-                Connect a crypto wallet to mint your Blockchain Travel Identity NFT and enable secure on-chain authentication.
-              </label>
-            </div>
-
-            <!-- Wallet options -->
-            <div class="field-group">
-              <label class="field-label">Choose Wallet Provider</label>
-              <div style="display:flex;flex-direction:column;gap:10px;" id="walletList">
-
-                <div class="wallet-connect-btn" data-wallet="metamask" style="margin-bottom:0;">
-                  <div class="wallet-connect-icon" style="background:rgba(245,150,50,0.15);border-color:rgba(245,150,50,0.3);">
-                    <i class="fas fa-fox" style="color:#f59622;"></i>
-                  </div>
-                  <div class="wallet-connect-text">
-                    <strong>MetaMask</strong>
-                    <span>Most popular Ethereum wallet</span>
-                  </div>
-                  <div class="wallet-connect-arrow"><i class="fas fa-chevron-right"></i></div>
-                </div>
-
-                <div class="wallet-connect-btn" data-wallet="walletconnect" style="margin-bottom:0;">
-                  <div class="wallet-connect-icon" style="background:rgba(59,130,246,0.15);border-color:rgba(59,130,246,0.3);">
-                    <i class="fas fa-link" style="color:var(--blue-light);"></i>
-                  </div>
-                  <div class="wallet-connect-text">
-                    <strong>WalletConnect</strong>
-                    <span>Connect via QR code or deep link</span>
-                  </div>
-                  <div class="wallet-connect-arrow"><i class="fas fa-chevron-right"></i></div>
-                </div>
-
-                <div class="wallet-connect-btn" data-wallet="coinbase" style="margin-bottom:0;">
-                  <div class="wallet-connect-icon" style="background:rgba(20,108,255,0.12);border-color:rgba(20,108,255,0.3);">
-                    <i class="fas fa-c" style="color:#1652f0;font-weight:900;"></i>
-                  </div>
-                  <div class="wallet-connect-text">
-                    <strong>Coinbase Wallet</strong>
-                    <span>Self-custody wallet by Coinbase</span>
-                  </div>
-                  <div class="wallet-connect-arrow"><i class="fas fa-chevron-right"></i></div>
-                </div>
-
-              </div>
-            </div>
-
-            <!-- Wallet address field -->
-            <div class="field-group">
-              <label class="field-label">Or Paste Wallet Address</label>
-              <div class="field-wrap">
-                <i class="fas fa-wallet field-icon"></i>
-                <input type="text" class="field-input" id="walletAddr" placeholder="0x...">
-              </div>
-            </div>
-
-            <!-- NFT preview card -->
-            <div class="field-group">
-              <label class="field-label">Identity NFT Preview</label>
-              <div style="
-                background: linear-gradient(135deg, rgba(15,25,45,0.95), rgba(12,20,38,0.95));
-                border: 1px solid rgba(59,130,246,0.3);
-                border-radius: var(--radius-lg);
-                padding: 22px;
-                box-shadow: 0 0 40px rgba(59,130,246,0.1);
-              ">
-                <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
-                  <div style="width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--orange),var(--blue));display:flex;align-items:center;justify-content:center;font-size:18px;color:#fff;">
-                    <i class="fas fa-user"></i>
-                  </div>
-                  <div>
-                    <div style="font-family:var(--font-display);font-weight:700;font-size:15px;" id="nftName">Your Name</div>
-                    <div style="font-size:12px;color:var(--teal);">Blockchain Verified Traveler</div>
-                  </div>
-                  <div style="margin-left:auto;background:rgba(20,184,166,0.15);border:1px solid rgba(20,184,166,0.4);color:var(--teal);font-size:11px;font-weight:600;padding:3px 9px;border-radius:99px;">
-                    <i class="fas fa-check-circle"></i> NFT
-                  </div>
-                </div>
-                <div style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;font-family:'Courier New',monospace;font-size:10px;color:var(--text-muted);word-break:break-all;">
-                  TOKEN ID: Minting pending wallet connection...
-                </div>
-              </div>
-            </div>
-
-          </div>
-
-          <div style="display:flex;gap:12px;margin-top:8px;">
-            <button class="submit-btn" type="button" id="backBtn3"
-              style="background:rgba(255,255,255,0.06);box-shadow:none;border:1px solid var(--border);flex:0 0 auto;width:auto;padding:15px 22px;">
-              <i class="fas fa-arrow-left"></i>
-            </button>
-            <button class="submit-btn" id="finalBtn" type="button" style="flex:1;">
-              <span class="btn-text"><i class="fas fa-cube"></i> Mint Identity & Create Account</span>
-              <i class="fas fa-circle-notch btn-spinner"></i>
-            </button>
-          </div>
-
-        </div><!-- /stepView3 -->
-
-
+        
         <!-- SUCCESS STATE -->
         <div class="success-overlay" id="successView">
           <div class="success-icon-wrap"><i class="fas fa-check"></i></div>
@@ -1382,94 +1176,16 @@
        JAVASCRIPT
   ============================================= -->
   <script>
-    /* ================================================
-       STEP NAVIGATION
-    ================================================ */
-    let currentStep = 1;
-    const totalSteps = 3;
-
-    function goToStep(step) {
-      // Hide all step views
-      for (let i = 1; i <= totalSteps; i++) {
-        document.getElementById('stepView' + i).style.display = 'none';
-      }
-      // Show current
-      document.getElementById('stepView' + step).style.display = 'block';
-
-      // Update progress bar
-      for (let i = 1; i <= totalSteps; i++) {
-        const el = document.getElementById('step' + i);
-        const num = document.getElementById('s' + i + 'n');
-        el.classList.remove('active', 'done');
-        if (i < step) {
-          el.classList.add('done');
-          num.innerHTML = '<i class="fas fa-check" style="font-size:11px;"></i>';
-        } else if (i === step) {
-          el.classList.add('active');
-          num.textContent = i;
-        } else {
-          num.textContent = i;
-        }
-      }
-
-      currentStep = step;
-    }
-
-    /* Step 1 → 2 */
-    document.getElementById('nextBtn1').addEventListener('click', function() {
-      const btn = this;
-      btn.classList.add('loading');
-      setTimeout(() => {
-        btn.classList.remove('loading');
-        goToStep(2);
-      }, 1000);
-    });
-
-    /* Step 2 → 1 */
-    document.getElementById('backBtn2').addEventListener('click', () => goToStep(1));
-
-    /* Step 2 → 3 */
-    document.getElementById('nextBtn2').addEventListener('click', function() {
-      const btn = this;
-      btn.classList.add('loading');
-      // Update NFT preview name
-      const first = document.getElementById('firstName').value || 'Your';
-      const last  = document.getElementById('lastName').value  || 'Name';
-      document.getElementById('nftName').textContent = first + ' ' + last;
-      setTimeout(() => {
-        btn.classList.remove('loading');
-        goToStep(3);
-      }, 1000);
-    });
-
-    /* Step 3 → 2 */
-    document.getElementById('backBtn3').addEventListener('click', () => goToStep(2));
-
-    /* Final submit → success */
-    document.getElementById('finalBtn').addEventListener('click', function() {
-      const btn = this;
-      btn.classList.add('loading');
-      setTimeout(() => {
-        btn.classList.remove('loading');
-        // Hide all steps + show success
-        for (let i = 1; i <= totalSteps; i++) {
-          const sv = document.getElementById('stepView' + i);
-          if (sv) sv.style.display = 'none';
-        }
-        document.querySelector('.steps-bar').style.display = 'none';
-        document.querySelector('.form-header').style.display = 'none';
-        document.getElementById('successView').classList.add('show');
-      }, 2000);
-    });
-
 
     /* ================================================
        PASSWORD TOGGLE
-    ================================================ */
+    ================================================= */
     function setupToggle(inputId, btnId) {
       const input = document.getElementById(inputId);
-      const btn   = document.getElementById(btnId);
-      if (!btn) return;
+      const btn = document.getElementById(btnId);
+
+      if (!input || !btn) return;
+
       btn.addEventListener('click', () => {
         const show = input.type === 'password';
         input.type = show ? 'text' : 'password';
@@ -1483,150 +1199,125 @@
 
     /* ================================================
        PASSWORD STRENGTH METER
-    ================================================ */
+    ================================================= */
     const pwdInput = document.getElementById('password');
+
     const segs = [
       document.getElementById('seg1'),
       document.getElementById('seg2'),
       document.getElementById('seg3'),
       document.getElementById('seg4')
     ];
+
     const strengthLabel = document.getElementById('strengthLabel');
 
     function calcStrength(pwd) {
       let score = 0;
-      if (pwd.length >= 8)  score++;
+
+      if (pwd.length >= 8) score++;
       if (/[A-Z]/.test(pwd)) score++;
       if (/[0-9]/.test(pwd)) score++;
       if (/[^A-Za-z0-9]/.test(pwd)) score++;
+
       return score;
     }
 
-    pwdInput.addEventListener('input', () => {
-      const val = pwdInput.value;
-      const score = val.length === 0 ? 0 : calcStrength(val);
-      const labels  = ['', 'Weak – add uppercase & numbers', 'Fair – add symbols', 'Good – almost there!', 'Strong – excellent password'];
-      const classes = ['', 'weak', 'fair', 'good', 'strong'];
+    if (pwdInput) {
+      pwdInput.addEventListener('input', () => {
 
-      segs.forEach((seg, i) => {
-        seg.className = 'strength-seg';
-        if (i < score) seg.classList.add(classes[score]);
+        const val = pwdInput.value;
+        const score = val.length === 0 ? 0 : calcStrength(val);
+
+        const labels = [
+          '',
+          'Weak – add uppercase & numbers',
+          'Fair – add symbols',
+          'Good – almost there!',
+          'Strong – excellent password'
+        ];
+
+        const classes = ['', 'weak', 'fair', 'good', 'strong'];
+
+        segs.forEach((seg, i) => {
+          if (!seg) return;
+
+          seg.className = 'strength-seg';
+
+          if (i < score) {
+            seg.classList.add(classes[score]);
+          }
+        });
+
+        if (strengthLabel) {
+          strengthLabel.textContent =
+            val.length === 0
+              ? 'Enter a password to check strength'
+              : labels[score];
+
+          strengthLabel.style.color = [
+            'var(--text-muted)',
+            '#ef4444',
+            '#f59e0b',
+            'var(--blue-light)',
+            'var(--teal)'
+          ][score];
+        }
+
       });
-
-      strengthLabel.textContent = val.length === 0 ? 'Enter a password to check strength' : labels[score];
-      strengthLabel.style.color = ['var(--text-muted)', '#ef4444', '#f59e0b', 'var(--blue-light)', 'var(--teal)'][score];
-    });
+    }
 
 
     /* ================================================
        CONFIRM PASSWORD MATCH
-    ================================================ */
-    document.getElementById('confirmPwd').addEventListener('input', function() {
-      const pwd  = document.getElementById('password').value;
-      if (this.value.length > 0) {
-        if (this.value === pwd) {
-          this.classList.remove('error');
-          this.classList.add('success');
+    ================================================= */
+    const confirmPwd = document.getElementById('confirmPwd');
+
+    if (confirmPwd) {
+      confirmPwd.addEventListener('input', function () {
+
+        const pwd = document.getElementById('password').value;
+
+        if (this.value.length > 0) {
+
+          if (this.value === pwd) {
+            this.classList.remove('error');
+            this.classList.add('success');
+          } else {
+            this.classList.remove('success');
+            this.classList.add('error');
+          }
+
         } else {
-          this.classList.remove('success');
-          this.classList.add('error');
+          this.classList.remove('error', 'success');
         }
-      } else {
-        this.classList.remove('error', 'success');
-      }
-    });
 
-
-    /* ================================================
-       TERMS CHECKBOX
-    ================================================ */
-    const termsCheck = document.getElementById('termsCheck');
-    termsCheck.addEventListener('click', () => {
-      const checked = termsCheck.classList.toggle('checked');
-      termsCheck.setAttribute('aria-checked', checked);
-    });
-    termsCheck.addEventListener('keydown', (e) => {
-      if (e.key === ' ' || e.key === 'Enter') {
-        e.preventDefault();
-        termsCheck.click();
-      }
-    });
-
-
-    /* ================================================
-       ROLE SELECTOR
-    ================================================ */
-    document.querySelectorAll('.role-option').forEach(option => {
-      option.addEventListener('click', () => {
-        document.querySelectorAll('.role-option').forEach(o => o.classList.remove('selected'));
-        option.classList.add('selected');
-        option.querySelector('input[type="radio"]').checked = true;
-      });
-    });
-
-
-    /* ================================================
-       WALLET PROVIDER SELECTION
-    ================================================ */
-    document.querySelectorAll('#walletList .wallet-connect-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('#walletList .wallet-connect-btn').forEach(b => {
-          b.style.borderColor = 'rgba(249,115,22,0.4)';
-          b.style.background  = 'linear-gradient(135deg, rgba(249,115,22,0.12), rgba(59,130,246,0.12))';
-        });
-        btn.style.borderColor = 'var(--orange)';
-        btn.style.borderStyle = 'solid';
-        btn.style.background  = 'linear-gradient(135deg, rgba(249,115,22,0.2), rgba(59,130,246,0.2))';
-
-        const wallet = btn.dataset.wallet;
-        document.getElementById('walletAddr').placeholder = '0x... (Connected via ' + wallet + ')';
-      });
-    });
-
-
-    /* ================================================
-       UPLOAD ZONE INTERACTION
-    ================================================ */
-    const uploadZone2 = document.getElementById('uploadZone2');
-    if (uploadZone2) {
-      uploadZone2.addEventListener('click', () => {
-        // Would open file dialog in production
-        uploadZone2.innerHTML = `
-          <i class="fas fa-check-circle" style="font-size:28px;color:var(--teal);display:block;margin-bottom:8px;"></i>
-          <p style="color:var(--teal);font-size:13px;font-weight:600;">Document ready for upload</p>
-          <p style="color:var(--text-muted);font-size:11px;margin-top:4px;">passport_scan.pdf · 2.4MB</p>
-        `;
-        uploadZone2.style.borderColor = 'var(--teal)';
-        uploadZone2.style.background  = 'rgba(20,184,166,0.06)';
-      });
-
-      uploadZone2.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        uploadZone2.style.borderColor = 'var(--orange)';
-        uploadZone2.style.background  = 'var(--orange-glow)';
-      });
-
-      uploadZone2.addEventListener('dragleave', () => {
-        uploadZone2.style.borderColor = 'rgba(249,115,22,0.35)';
-        uploadZone2.style.background  = 'transparent';
       });
     }
 
 
     /* ================================================
-       REAL-TIME NFT NAME PREVIEW
-    ================================================ */
-    ['firstName', 'lastName'].forEach(id => {
-      const el = document.getElementById(id);
-      if (el) {
-        el.addEventListener('input', () => {
-          const first = document.getElementById('firstName').value || 'Your';
-          const last  = document.getElementById('lastName').value  || 'Name';
-          const nftName = document.getElementById('nftName');
-          if (nftName) nftName.textContent = first + ' ' + last;
-        });
-      }
-    });
+       TERMS CHECKBOX
+    ================================================= */
+    const termsCheck = document.getElementById('termsCheck');
+
+    if (termsCheck) {
+
+      termsCheck.addEventListener('click', () => {
+        const checked = termsCheck.classList.toggle('checked');
+        termsCheck.setAttribute('aria-checked', checked);
+      });
+
+      termsCheck.addEventListener('keydown', (e) => {
+
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          termsCheck.click();
+        }
+
+      });
+
+    }
+
   </script>
-</body>
+  </body>
 </html>
