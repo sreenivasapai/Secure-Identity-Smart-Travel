@@ -13,13 +13,15 @@ def home():
 def signup():
 
     if request.method == "POST":
+        print("FORM DATA:", request.form)
 
-        first_name = request.form["firstName"].strip()
-        last_name = request.form["lastName"].strip()
-        email = request.form["email"].strip().lower()
-        phone = request.form["phone"].strip()
-        nationality = request.form["nationality"]
-        password = request.form["password"]
+
+        first_name = request.form.get("firstName", "").strip()
+        last_name = request.form.get("lastName", "").strip()
+        email = request.form.get("email", "").strip().lower()
+        phone = request.form.get("phone", "").strip()
+        nationality = request.form.get("nationality", "")
+        password = request.form.get("password", "")
 
         username = first_name + " " + last_name
 
@@ -47,17 +49,22 @@ def signup():
 
     return render_template("signup.html")
 
+
 @app.route("/signin", methods=["GET", "POST"])
 def signin():
     if request.method == "POST":
-        email = request.form["email"].strip().lower()
-        password = request.form["password"]
+
+        email = request.form.get("email", "").strip().lower()
+        password = request.form.get("password", "")
+
+        print("LOGIN:", email)
 
         user = users.find_one({"email": email})
+        print("USER:", user)
+
         if user and bcrypt.checkpw(password.encode('utf-8'), user["password"].encode('utf-8')):
             session["username"] = user["username"]
-            session["email"] = user["email"]  # Optional: store more for dashboard
-            flash("Login successful!", "success")
+            session["email"] = user["email"]
             return redirect(url_for("dashboard"))
         else:
             flash("Invalid email or password!", "error")
@@ -71,6 +78,7 @@ def dashboard():
         return redirect(url_for("signin"))
 
     return render_template("dashboard.html", username=session["username"])
+
 
 @app.route("/logout")
 def logout():

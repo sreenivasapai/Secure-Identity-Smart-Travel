@@ -1022,72 +1022,74 @@
                 <label class="field-label">First Name</label>
                 <div class="field-wrap">
                   <i class="fas fa-user field-icon"></i>
-                  <input type="text" class="field-input" id="firstName" placeholder="Elena" autocomplete="given-name">
+                 <input type="text" class="field-input" id="firstName" name="firstName" placeholder="Sreenivasa" required>
+
                 </div>
               </div>
               <div class="field-group">
                 <label class="field-label">Last Name</label>
                 <div class="field-wrap">
                   <i class="fas fa-user field-icon"></i>
-                  <input type="text" class="field-input" id="lastName" placeholder="Vasquez" autocomplete="family-name">
+                  <input type="text" class="field-input" id="lastName" name="lastName" placeholder="Pai" required>
                 </div>
               </div>
             </div>
 
-            <!-- Email -->
-            <div class="field-group">
-              <label class="field-label">Email Address</label>
-              <div class="field-wrap">
-                <i class="fas fa-envelope field-icon"></i>
-                <input type="email" class="field-input" id="email" placeholder="elena@example.com" autocomplete="email">
-              </div>
-            </div>
+<!-- Email -->
+<div class="field-group">
+  <label class="field-label">Email Address</label>
+  <div class="field-wrap">
+    <i class="fas fa-envelope field-icon"></i>
+    <input type="email" class="field-input" id="email" name="email" placeholder="pai@example.com" required>
+  </div>
+</div>
 
-            <!-- Phone -->
-            <div class="field-group">
-              <label class="field-label">Phone Number</label>
-              <div class="field-wrap">
-                <i class="fas fa-phone field-icon"></i>
-                <input type="tel" class="field-input" id="phone" placeholder="+1 (555) 000-0000" autocomplete="tel">
-              </div>
-            </div>
+<!-- Phone -->
+<div class="field-group">
+  <label class="field-label">Phone Number</label>
+  <div class="field-wrap">
+    <i class="fas fa-phone field-icon"></i>
+    <input type="tel" class="field-input" id="phone" name="phone" placeholder="+1 (555) 000-0000" autocomplete="tel">
+  </div>
+</div>
 
-            <!-- Nationality -->
-            <div class="field-group">
-              <label class="field-label">Nationality</label>
-              <div class="field-wrap">
-                <i class="fas fa-flag field-icon"></i>
-                <select class="field-select" id="nationality">
-                  <option value="" disabled selected>Select your country</option>
-                  <option>🇺🇸 United States</option>
-                  <option>🇬🇧 United Kingdom</option>
-                  <option>🇪🇸 Spain</option>
-                  <option>🇫🇷 France</option>
-                  <option>🇩🇪 Germany</option>
-                  <option>🇮🇳 India</option>
-                  <option>🇯🇵 Japan</option>
-                  <option>🇨🇳 China</option>
-                  <option>🇧🇷 Brazil</option>
-                  <option>🇦🇺 Australia</option>
-                  <option>🇰🇷 South Korea</option>
-                  <option>🇮🇹 Italy</option>
-                  <option>🇨🇦 Canada</option>
-                  <option>🇸🇦 Saudi Arabia</option>
-                </select>
-                <i class="fas fa-chevron-down select-arrow"></i>
-              </div>
-            </div>
+<!-- Nationality -->
+<div class="field-group">
+  <label class="field-label">Nationality</label>
+  <div class="field-wrap">
+    <i class="fas fa-flag field-icon"></i>
+    <select class="field-select" id="nationality" name="nationality">
+      <option value="" disabled selected>Select your country</option>
+      <option>🇺🇸 United States</option>
+      <option>🇬🇧 United Kingdom</option>
+      <option>🇪🇸 Spain</option>
+      <option>🇫🇷 France</option>
+      <option>🇩🇪 Germany</option>
+      <option>🇮🇳 India</option>
+      <option>🇯🇵 Japan</option>
+      <option>🇨🇳 China</option>
+      <option>🇧🇷 Brazil</option>
+      <option>🇦🇺 Australia</option>
+      <option>🇰🇷 South Korea</option>
+      <option>🇮🇹 Italy</option>
+      <option>🇨🇦 Canada</option>
+      <option>🇸🇦 Saudi Arabia</option>
+    </select>
+    <i class="fas fa-chevron-down select-arrow"></i>
+  </div>
+</div>
 
-            <!-- Password -->
-            <div class="field-group">
-              <label class="field-label">Password</label>
-              <div class="field-wrap">
-                <i class="fas fa-lock field-icon"></i>
-                <input type="password" class="field-input" id="password" placeholder="Min. 8 characters" autocomplete="new-password">
-                <button type="button" class="field-toggle" id="togglePwd" aria-label="Toggle password">
-                  <i class="fas fa-eye"></i>
-                </button>
-              </div>
+<!-- Password -->
+<div class="field-group">
+  <label class="field-label">Password</label>
+  <div class="field-wrap">
+    <i class="fas fa-lock field-icon"></i>
+    <input type="password" class="field-input" id="password" name="password" placeholder="Min. 8 characters"
+      autocomplete="new-password">
+    <button type="button" class="field-toggle" id="togglePwd" aria-label="Toggle password">
+      <i class="fas fa-eye"></i>
+    </button>
+  </div>
               <!-- Strength meter -->
               <div class="strength-bar" id="strengthBar">
                 <div class="strength-seg" id="seg1"></div>

@@ -1089,6 +1089,7 @@
 
         <!-- ── EMAIL VIEW ── -->
         <div id="emailView">
+          <form method="POST" action="/signin">
           <div class="fields">
 
             <!-- Email -->
@@ -1096,7 +1097,7 @@
               <label class="field-lbl">Email Address</label>
               <div class="field-wrap">
                 <i class="fas fa-envelope f-ico"></i>
-                <input type="email" class="fi" id="emailInput" placeholder="you@example.com" autocomplete="email" />
+                <input type="email" name="email" class="fi" id="emailInput" placeholder="you@example.com" autocomplete="email" />
               </div>
             </div>
 
@@ -1105,7 +1106,8 @@
               <label class="field-lbl">Password</label>
               <div class="field-wrap">
                 <i class="fas fa-lock f-ico"></i>
-                <input type="password" class="fi" id="pwdInput" placeholder="Enter your password" autocomplete="current-password" />
+                <input type="password" name="password" class="fi" id="pwdInput" placeholder="Enter your password"
+                  autocomplete="current-password" />
                 <button type="button" class="fi-toggle" id="pwdToggle" aria-label="Toggle password">
                   <i class="fas fa-eye"></i>
                 </button>
@@ -1124,10 +1126,12 @@
           </div>
 
           <!-- Submit -->
-          <button class="btn-submit" id="loginBtn" type="button" onclick="handleLogin()">
-            <span class="btn-text"><i class="fas fa-arrow-right-to-bracket"></i> Sign In</span>
-            <i class="fas fa-circle-notch spinner"></i>
+          <button class="btn-submit" type="submit">
+            <span class="btn-text">
+              <i class="fas fa-arrow-right-to-bracket"></i> Sign In
+            </span>
           </button>
+          </form>
 
           <!-- OR -->
           <div class="divider">
