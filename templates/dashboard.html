@@ -1258,6 +1258,7 @@
     <!-- Nav -->
     <nav class="sb-nav">
       <div class="sb-section-label">Main</div>
+      
 
       <a href="#" class="sb-link active" onclick="setActive(this)">
         <i class="fas fa-grid-2"></i> Dashboard
@@ -1266,7 +1267,7 @@
         <i class="fas fa-id-card"></i> My Identity
         <span class="sb-badge mint">NFT</span>
       </a>
-      <a href="#" class="sb-link" onclick="setActive(this)">
+      <a href="/explore" class="sb-link" onclick="setActive(this)">
         <i class="fas fa-map-location-dot"></i> Explore
       </a>
       <a href="#" class="sb-link" onclick="setActive(this)">
@@ -1401,6 +1402,7 @@
        MAIN CONTENT
   ══════════════════════════════════════ -->
   <main class="main">
+    {% block content %}
 
     <!-- 1. GREETING ROW -->
     <div class="greeting-row fade-up">
@@ -1963,6 +1965,7 @@
       <span style="display:flex;align-items:center;gap:5px;"><span style="width:7px;height:7px;border-radius:50%;background:var(--success);box-shadow:0 0 6px var(--success);display:inline-block;"></span> All Systems Operational</span>
       <a href="index.html" style="color:var(--fire-lt);text-decoration:none;font-weight:600;">Back to Home</a>
     </div>
+    {% endblock %}
 
   </main><!-- /main -->
 

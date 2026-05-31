@@ -1,0 +1,34 @@
+{% extends "dashboard.html" %}
+
+{% block content %}
+
+<h2 style="color:white;">Explore Nearby Places 🌍</h2>
+
+<button onclick="getLocation()">Find Places Near Me</button>
+
+<div id="result" style="color:white;"></div>
+
+<script>
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(sendPosition);
+        }
+    }
+
+    function sendPosition(position) {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+
+        fetch(`/get_places?lat=${lat}&lon=${lon}`)
+            .then(res => res.json())
+            .then(data => {
+                let output = "";
+                data.forEach(place => {
+                    output += `<p>${place.name}</p>`;
+                });
+                document.getElementById("result").innerHTML = output;
+            });
+    }
+</script>
+
+{% endblock %}

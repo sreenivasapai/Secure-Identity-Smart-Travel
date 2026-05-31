@@ -79,6 +79,11 @@ def dashboard():
 
     return render_template("dashboard.html", username=session["username"])
 
+@app.route("/explore")
+def explore():
+    if "username" not in session:
+        return redirect(url_for("signin"))
+    return render_template("explore.html")
 
 @app.route("/logout")
 def logout():
