@@ -1,6 +1,10 @@
+from urllib import response
+
 from flask import Flask, render_template, request, redirect, session, flash, url_for
 from database.db import users  
 import bcrypt
+from flask import jsonify
+import requests
 
 app = Flask(__name__)
 app.secret_key = "smarttour_secret_key"  
@@ -90,6 +94,59 @@ def logout():
     session.clear()
     flash("Logged out successfully!", "success")
     return redirect(url_for("home"))
+
+@app.route("/get_places")
+def get_places():
+
+    lat = request.args.get("lat")
+    lon = request.args.get("lon")
+    place_type = request.args.get("type")
+
+    API_KEY = "945de15324b84f16884cdaee5a2acc85"
+
+    categories = {
+        "Restaurants": "catering.restaurant",
+        "Hotels": "accommodation.hotel",
+        "Hospitals": "healthcare.hospital",
+        "Police": "service.police",
+        "ATM": "service.financial.atm",
+        "Tourist Places": "tourism.sights",
+        "Bus Stations": "public_transport.bus",
+        "Railway Stations": "public_transport.train",
+        "Airports": "airport"
+    }
+
+    category = categories.get(place_type, "tourism")
+
+    url = (
+        f"https://api.geoapify.com/v2/places"
+        f"?categories={category}"
+        f"&filter=circle:{lon},{lat},5000"
+        f"&limit=15"
+        f"&apiKey={API_KEY}"
+    )
+
+    print("URL:", url)
+    response = requests.get(url)
+
+    print("STATUS:", response.status_code)
+    print("RESPONSE:", response.text[:500])
+
+    data = response.json()
+
+    places = []
+
+    for place in data.get("features", []):
+        props = place.get("properties", {})
+
+        places.append({
+            "name": props.get("name", "Unknown Place"),
+            "address": props.get("formatted", "")
+        })
+
+    return jsonify(places)
+
+
 
 if __name__ == "__main__":
     app.run(debug=True)

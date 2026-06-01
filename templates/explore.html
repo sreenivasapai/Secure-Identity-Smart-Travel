@@ -2,33 +2,601 @@
 
 {% block content %}
 
-<h2 style="color:white;">Explore Nearby Places 🌍</h2>
 
-<button onclick="getLocation()">Find Places Near Me</button>
-
-<div id="result" style="color:white;"></div>
-
-<script>
-    function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(sendPosition);
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Explore Nearby Places</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Serif+Display&display=swap"
+        rel="stylesheet" />
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
-    }
 
-    function sendPosition(position) {
-        const lat = position.coords.latitude;
-        const lon = position.coords.longitude;
+        :root{
+            --bg:#070f1f;
+            --surface:#121c31;
+            --surface2:#0f1a2d;
 
-        fetch(`/get_places?lat=${lat}&lon=${lon}`)
-            .then(res => res.json())
-            .then(data => {
-                let output = "";
-                data.forEach(place => {
-                    output += `<p>${place.name}</p>`;
-                });
-                document.getElementById("result").innerHTML = output;
+            --border:rgba(255,255,255,.08);
+            --border2:rgba(255,255,255,.15);
+
+            --text:#ffffff;
+            --text2:#a7b4d6;
+            --text3:#6f7ea3;
+
+            --accent:#ff7a1a;
+            --accent-bg:rgba(255,122,26,.12);
+            --accent-border:#ff7a1a;
+            --accent-text:#ff7a1a;
+
+            --radius-md:12px;
+            --radius-lg:18px;
+            --radius-xl:24px;
+        }
+
+        
+
+        .app {
+            width: 100%;
+            max-width: 480px;
+            background: var(--surface);
+            border-radius: var(--radius-xl);
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+        .explore-container{
+            width:100%;
+            padding:24px;
+        }
+
+        /* Hero */
+        .hero{
+            background:#121c31;
+            border:1px solid rgba(255,255,255,.08);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: rgba(37, 99, 235, 0.06);
+        }
+
+        .hero-globe {
+            font-size: 52px;
+            line-height: 1;
+            margin-bottom: 1rem;
+            display: block;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        .hero h1{
+            color:white;
+        }
+
+        .hero p{
+            color:#a7b4d6;
+        }
+
+        /* Category section */
+        .section {
+            padding: 1.5rem 1.5rem 1rem;
+        }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--text3);
+            margin-bottom: 0.9rem;
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+
+        .cat-card{
+            background:#121c31;
+            border:1px solid rgba(255,255,255,.08);
+            color:white;
+        }
+
+        .cat-card:hover{
+            border-color:#ff7a1a;
+        }
+
+        .cat-card:active {
+            transform: scale(0.97);
+        }
+
+        .cat-card.selected{
+            background:rgba(255,122,26,.12);
+            border:1px solid #ff7a1a;
+        }
+
+        .cat-card .cat-emoji {
+            font-size: 22px;
+            line-height: 1;
+        }
+
+        .cat-card .cat-label {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text2);
+            text-align: center;
+            line-height: 1.3;
+        }
+
+        .cat-card.selected .cat-label {
+            color: var(--accent-text);
+        }
+
+        /* Divider */
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 0 1.5rem;
+        }
+
+        /* Find button */
+        .find-section {
+            padding: 1.25rem 1.5rem;
+        }
+
+        .find-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            width: 100%;
+            padding: 14px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            color: #fff;
+            background: var(--accent);
+            border: none;
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+            letter-spacing: -0.01em;
+        }
+
+        .find-btn:hover {
+            background: #1d4ed8;
+            box-shadow: 0 4px 16px rgba(37, 99, 235, 0.25);
+        }
+
+        .find-btn:active {
+            transform: scale(0.98);
+        }
+
+        .find-btn svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Results */
+        .results-box{
+            background:#121c31;
+            border:1px solid rgba(255,255,255,.08);
+        }
+
+        .results-empty {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 2rem 1rem;
+            color: var(--text3);
+            font-size: 13px;
+            text-align: center;
+        }
+
+        .results-empty svg {
+            width: 28px;
+            height: 28px;
+            stroke: var(--text3);
+            fill: none;
+            stroke-width: 1.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            opacity: 0.6;
+        }
+
+        .results-inner {
+            padding: 1rem 1.25rem;
+        }
+
+        .results-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .results-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+            flex: 1;
+        }
+
+        .count-badge {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 20px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            color: var(--text2);
+        }
+
+        .result-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 9px 0;
+            border-bottom: 1px solid var(--border);
+            animation: fadeIn 0.3s ease both;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .result-num {
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text2);
+            flex-shrink: 0;
+        }
+
+        .result-info {
+            flex: 1;
+        }
+
+        .result-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+        }
+
+        .result-dist {
+            font-size: 12px;
+            color: var(--text3);
+            margin-top: 1px;
+        }
+
+        .result-arrow {
+            width: 16px;
+            height: 16px;
+            stroke: var(--text3);
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* Loading dots */
+        .loading {
+            display: flex;
+            gap: 7px;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 0;
+        }
+
+        .loading span {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--text3);
+            animation: dot 1s ease-in-out infinite;
+        }
+
+        .loading span:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .loading span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes dot {
+
+            0%,
+            100% {
+                opacity: 0.3;
+                transform: translateY(0);
+            }
+
+            50% {
+                opacity: 1;
+                transform: translateY(-5px);
+            }
+        }
+
+        @media (max-width: 400px) {
+            .categories {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .hero h1 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="explore-container" role="main">
+
+        <!-- Section 1: Hero -->
+        <section class="hero" aria-label="App header">
+            <span class="hero-globe" role="img" aria-label="globe">🌍</span>
+            <h1>Explore Nearby Places</h1>
+            <p>Find attractions, food, hotels and essential services around you.</p>
+        </section>
+
+        <!-- Section 2: Category Cards Grid -->
+        <section class="section" aria-label="Categories">
+            <p class="section-label">Choose a category</p>
+            <div class="categories" id="categories" role="group" aria-label="Place categories">
+                <button class="cat-card" data-cat="Tourist Places" data-emoji="🏛" onclick="selectCat(this)"
+                    aria-pressed="false">
+                    <span class="cat-emoji" aria-hidden="true">🏛</span>
+                    <span class="cat-label">Tourist Places</span>
+                </button>
+                <button class="cat-card" data-cat="Restaurants" data-emoji="🍽" onclick="selectCat(this)"
+                    aria-pressed="false">
+                    <span class="cat-emoji" aria-hidden="true">🍽</span>
+                    <span class="cat-label">Restaurants</span>
+                </button>
+                <button class="cat-card" data-cat="Hotels" data-emoji="🏨" onclick="selectCat(this)"
+                    aria-pressed="false">
+                    <span class="cat-emoji" aria-hidden="true">🏨</span>
+                    <span class="cat-label">Hotels</span>
+                </button>
+                <button class="cat-card" data-cat="Hospitals" data-emoji="🏥" onclick="selectCat(this)"
+                    aria-pressed="false">
+                    <span class="cat-emoji" aria-hidden="true">🏥</span>
+                    <span class="cat-label">Hospitals</span>
+                </button>
+                <button class="cat-card" data-cat="Police" data-emoji="🚔" onclick="selectCat(this)"
+                    aria-pressed="false">
+                    <span class="cat-emoji" aria-hidden="true">🚔</span>
+                    <span class="cat-label">Police</span>
+                </button>
+                <button class="cat-card" data-cat="ATM" data-emoji="🏧" onclick="selectCat(this)" aria-pressed="false">
+                    <span class="cat-emoji" aria-hidden="true">🏧</span>
+                    <span class="cat-label">ATM</span>
+                </button>
+                <button class="cat-card" data-cat="Bus Stations" data-emoji="🚌" onclick="selectCat(this)"
+                    aria-pressed="false">
+                    <span class="cat-emoji" aria-hidden="true">🚌</span>
+                    <span class="cat-label">Bus Stations</span>
+                </button>
+                <button class="cat-card" data-cat="Railway Stations" data-emoji="🚆" onclick="selectCat(this)"
+                    aria-pressed="false">
+                    <span class="cat-emoji" aria-hidden="true">🚆</span>
+                    <span class="cat-label">Railway Stations</span>
+                </button>
+                <button class="cat-card" data-cat="Airports" data-emoji="✈" onclick="selectCat(this)"
+                    aria-pressed="false">
+                    <span class="cat-emoji" aria-hidden="true">✈</span>
+                    <span class="cat-label">Airports</span>
+                </button>
+            </div>
+        </section>
+
+        <div class="divider"></div>
+
+        <!-- Section 3: Find Button -->
+        <div class="find-section">
+            <button class="find-btn" id="findBtn" onclick="findPlaces()" aria-label="Find nearby places">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
+                    <circle cx="12" cy="9" r="2.5" />
+                </svg>
+                Find Nearby Places
+            </button>
+        </div>
+
+        <!-- Section 4: Results Container -->
+        <div class="results-box" id="results" aria-live="polite" aria-label="Search results">
+            <div class="results-empty" id="emptyState">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    <line x1="11" y1="8" x2="11" y2="14" />
+                    <line x1="8" y1="11" x2="14" y2="11" />
+                </svg>
+                <span>Select a category and click Find.</span>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let selected = null;
+
+        const MOCK_DATA = {
+            "Tourist Places": [["Krishnapuram Palace", "1.2 km"], ["Thevally Beach", "2.4 km"], ["Ashtamudi Lake View", "3.1 km"]],
+            "Restaurants": [["Arya Bhavan", "0.4 km"], ["Hotel Sea Shell", "0.9 km"], ["Malabar Kitchen", "1.6 km"]],
+            "Hotels": [["Hotel Sudarsan", "0.7 km"], ["Nani Hotels", "1.1 km"], ["Le Meridien Kollam", "2.0 km"]],
+            "Hospitals": [["Bishop Moore Hospital", "0.8 km"], ["Travancore Medical College", "1.5 km"], ["Kollam District Hospital", "2.2 km"]],
+            "Police": [["Kollam City Police", "0.6 km"], ["Chinnakada Police Station", "1.3 km"], ["Tribunal Police Post", "1.9 km"]],
+            "ATM": [["SBI ATM – Main Rd", "0.2 km"], ["HDFC ATM – Chinnakada", "0.5 km"], ["Canara Bank ATM", "0.8 km"]],
+            "Bus Stations": [["Kollam KSRTC Bus Stand", "0.9 km"], ["Chinnakada Bus Stop", "0.4 km"], ["Asramam Bus Stand", "1.7 km"]],
+            "Railway Stations": [["Kollam Junction", "1.0 km"], ["Eravipuram Station", "3.4 km"], ["Perinad Station", "6.1 km"]],
+            "Airports": [["Trivandrum Intl Airport", "68 km"], ["Cochin Intl Airport", "142 km"], ["Calicut Intl Airport", "238 km"]]
+        };
+
+        function selectCat(el) {
+            document.querySelectorAll('.cat-card').forEach(c => {
+                c.classList.remove('selected');
+                c.setAttribute('aria-pressed', 'false');
             });
-    }
-</script>
+            el.classList.add('selected');
+            el.setAttribute('aria-pressed', 'true');
+            selected = el.dataset.cat;
 
+            const box = document.getElementById('results');
+            box.innerHTML = '<div class="results-empty" style="padding:1rem;font-size:13px;color:var(--text3);text-align:center;">' + el.dataset.emoji + ' ' + selected + ' selected — click Find to search.</div>';
+        }
+
+        async function findPlaces() {
+
+                if (!selected) {
+                    const box = document.getElementById('results');
+                    box.innerHTML =
+                        '<div class="results-empty"><span style="font-size:22px">👆</span><span>Please select a category first.</span></div>';
+                    return;
+                }
+
+                const box = document.getElementById('results');
+
+                box.innerHTML =
+                    '<div class="loading"><span></span><span></span><span></span></div>';
+
+                if (!navigator.geolocation) {
+                    box.innerHTML =
+                        '<div class="results-empty">Geolocation not supported.</div>';
+                    return;
+                }
+
+                navigator.geolocation.getCurrentPosition(
+
+                    async function (position) {
+
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+
+                        try {
+
+                            const response = await fetch(
+                                `/get_places?type=${encodeURIComponent(selected)}&lat=${lat}&lon=${lon}`
+                            );
+
+                            const places = await response.json();
+
+                            const emoji =
+                                document.querySelector('.cat-card.selected .cat-emoji').textContent;
+
+                            let html = `
+                    <div class="results-inner">
+                        <div class="results-header">
+                            <span class="results-title">
+                                ${emoji} Nearby ${selected}
+                            </span>
+
+                            <span class="count-badge">
+                                ${places.length} found
+                            </span>
+                        </div>
+                `;
+
+                            places.forEach((place, i) => {
+
+                                html += `
+                        <div class="result-item">
+                            <div class="result-num">${i + 1}</div>
+
+                            <div class="result-info">
+                                <div class="result-name">
+                                    ${place.name}
+                                </div>
+
+                                <div class="result-dist">
+                                    Nearby Location
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                            });
+
+                            html += `</div>`;
+
+                            box.innerHTML = html;
+
+                        } catch (error) {
+
+                            box.innerHTML = `
+                    <div class="results-empty">
+                        Failed to load nearby places.
+                    </div>
+                `;
+
+                            console.error(error);
+                        }
+
+                    },
+
+                    function (error) {
+
+                        box.innerHTML = `
+                <div class="results-empty">
+                    Location access denied.
+                </div>
+            `;
+                    }
+                );
+            }
+    </script>
 {% endblock %}

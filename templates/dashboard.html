@@ -1260,14 +1260,14 @@
       <div class="sb-section-label">Main</div>
       
 
-      <a href="#" class="sb-link active" onclick="setActive(this)">
+      <a href="/dashboard" class="sb-link {% if active_page == 'dashboard' %}active{% endif %}">
         <i class="fas fa-grid-2"></i> Dashboard
       </a>
       <a href="#" class="sb-link" onclick="setActive(this)">
         <i class="fas fa-id-card"></i> My Identity
         <span class="sb-badge mint">NFT</span>
       </a>
-      <a href="/explore" class="sb-link" onclick="setActive(this)">
+      <a href="/explore" class="sb-link {% if active_page == 'explore' %}active{% endif %}">
         <i class="fas fa-map-location-dot"></i> Explore
       </a>
       <a href="#" class="sb-link" onclick="setActive(this)">
