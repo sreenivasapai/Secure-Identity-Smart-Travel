@@ -1304,9 +1304,11 @@
 
     <!-- User card -->
     <div class="sb-user">
-      <div class="sb-avatar">EV</div>
+      <div class="sb-avatar">
+        {{ session.username[0]|upper }}
+      </div>
       <div>
-        <div class="sb-user-name">Elena Vasquez</div>
+        <div class="sb-user-name">{{ session.username }}</div>
         <div class="sb-user-role">Verified Traveler</div>
       </div>
       <div class="sb-user-dot"></div>
@@ -1407,7 +1409,7 @@
     <!-- 1. GREETING ROW -->
     <div class="greeting-row fade-up">
       <div class="greeting-text">
-        <h1>Good morning, <span>Elena</span> 👋</h1>
+        <h1>Good morning, <span>{{ session.username }}</span> 👋</h1>
         <p>Your blockchain identity is verified and active · Tokyo, Japan · <span id="currentTime"></span></p>
       </div>
       <div class="greeting-actions">
@@ -1645,7 +1647,7 @@
           <div class="nft-top">
             <div class="nft-avatar"><i class="fas fa-user"></i></div>
             <div>
-              <div class="nft-name">Elena Vasquez</div>
+              <div class="nft-name">{{ session.username }}</div>
               <div class="nft-role">Blockchain Verified Traveler</div>
             </div>
             <div class="nft-verified"><i class="fas fa-check-circle"></i> Verified</div>
